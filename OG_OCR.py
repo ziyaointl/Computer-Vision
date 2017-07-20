@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-img = cv2.imread('TestImages/digits.png')
+img = cv2.imread('assets/digits.png')
 #print img
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 # Now we split the image to 5000 cells, each 20x20 size
@@ -33,7 +33,7 @@ accuracy = correct*100.0/result.size
 print( accuracy )
 
 
-src = cv2.imread("TestImages/Numbers/Drawn4.jpg", 0)
+src = cv2.imread("assets/Numbers/Drawn4.jpg", 0)
 cv2.imshow("orig", src)
 cv2.waitKey()
 
