@@ -1,6 +1,7 @@
 __author__ = 'zhangm2'
 
 import cv2
+import numpy
 
 def show_img(img):
     cv2.imshow("Main", img)
@@ -27,15 +28,45 @@ show_img(img)
 img = cv2.Canny(img, 100, 200)
 show_img(img)
 
+# #Line detection
+# lines = cv2.HoughLinesP(img, 1, numpy.pi/180,
+#                         threshold = 5,
+#                         minLineLength = 20, maxLineGap = 10)
+# for lineSet in lines:
+#     for line in lineSet:
+#         cv2.line(oriImg, (line[0], line[1]), (line[2], line[3]),
+#                  (255, 255, 0), thickness=5)
+#
+# show_img(oriImg)
+
 #Find contours
-ret,thresh = cv2.threshold(img,127,255,0)
+ret, thresh = cv2.threshold(img,127,255,0)
 imgCont, contrs, hier = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-cv2.drawContours(oriImg, contrs, -1, (0,255,0), 3)
+
+finalContr = None
+contrArea = 0
+
+for x in range(len(contrs)):
+    epsilon = 0.1*cv2.arcLength(contrs[x], True)
+    approx = cv2.approxPolyDP(contrs[x], epsilon, True)
+    if (cv2.isContourConvex(approx)):
+        area = abs(cv2.contourArea(approx))
+        if area > contrArea:
+            finalContr = approx
+            contrArea = area
+
+contrs = [finalContr]
+cv2.drawContours(oriImg, contrs, -1, (0, 255, 0), 3)
+
+for point in finalContr:
+    x = point[0][0]
+    y = point[0][1]
+    cv2.circle(oriImg, (x, y), 5, (255, 0, 255))
 show_img(oriImg)
 
-#Corners
-goodFeats = cv2.goodFeaturesToTrack(img, 20, 0.1, 30)
-for goodFeatSets in goodFeats:
-    for goodFeatPoints in goodFeatSets:
-        cv2.circle(oriImg, (goodFeatPoints[0], goodFeatPoints[1]), 5, (255, 255, 255))
-show_img(oriImg)
+# #Corners
+# goodFeats = cv2.goodFeaturesToTrack(img, 20, 0.1, 30)
+# for goodFeatSets in goodFeats:
+#     for goodFeatPoints in goodFeatSets:
+#         cv2.circle(oriImg, (goodFeatPoints[0], goodFeatPoints[1]), 5, (255, 255, 255))
+# show_img(oriImg)
