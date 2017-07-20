@@ -11,10 +11,6 @@ cv2.ocl.setUseOpenCL(False)
 
 img = cv2.imread("TestImages/Sample.jpg")
 
-
-
-
-
 hit = []
 while 1:
     ret, vidO = vidCap.read()
@@ -39,7 +35,6 @@ while 1:
         matches1.sort(key = lambda x: x.distance)
         matches.append(matches1)
 
-    # draw matches with distance less than threshold
 
 
 
@@ -49,21 +44,12 @@ while 1:
                 break
             else:
                 hit[k] = hit[k] + 1
-        img4 = cv2.drawMatches(vid, kp1, img[0:600, 600 * k:600 * k + 600], kp[k], matches[k][:j], None)
-    #
-    # for j in range(len(matches3)):
-    #     if matches3[j].distance > 30:
-    #         break
-    #     else:
-    #         hit[2] = hit[2] + 1
-    # img5 = cv2.drawMatches(vid, kp1, img[0:600, 1200:1800], kp4, matches3[:i], None)
+        # img4 = cv2.drawMatches(vid, kp1, img[0:600, 600 * k:600 * k + 600], kp[k], matches[k][:j], None)
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     cv2.putText(vidO, str(hit), (100,100),font, 1, (0,0,255))
-    # cv2.imshow("Matchesaa", img[0:600, 1200:1800])
     cv2.imshow("Video", vidO)
-    # cv2.imshow("MatchesB", img4)
-    # cv2.imshow("MatchesC", img5)
+
     char = cv2.waitKey(10)
     if chr(char & 0xFF) == 'q':
         # cv2.imwrite("Capture.jpg", vid)
