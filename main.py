@@ -16,4 +16,4 @@ for lineSet in lines:
 
 cv2.imshow("HoughLines", img)
 
-cv2.waitKeyEx()
+cv2.waitKey()
