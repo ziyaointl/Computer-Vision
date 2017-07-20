@@ -15,8 +15,8 @@ x = np.array(cells)
 train = x[:,:50].reshape(-1,400).astype(np.float32) # Size = (2500,400)
 test = x[:,50:100].reshape(-1,400).astype(np.float32) # Size = (2500,400)
 print train.shape
-#print train[0].shape
 print test.shape
+
 # Create labels for train and test data
 k = np.arange(10)
 train_labels = np.repeat(k,250)[:,np.newaxis]
@@ -33,7 +33,7 @@ accuracy = correct*100.0/result.size
 print( accuracy )
 
 
-src = cv2.imread("assets/Numbers/Drawn4.jpg", 0)
+src = cv2.imread("assets/Numbers/PoorlyDrawn4.jpg", 0)
 cv2.imshow("orig", src)
 cv2.waitKey()
 
