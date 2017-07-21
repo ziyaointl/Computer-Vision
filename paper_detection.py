@@ -10,8 +10,9 @@ def show_img(img):
 def get_paper(img):
     #Read in file and resize
     oriImg = img
-    ratio = .2
-    resizedImg = cv2.resize(oriImg, (0, 0), fx = ratio, fy = ratio)
+    ratioSmall = .2
+    ratioLarge = .5
+    resizedImg = cv2.resize(oriImg, (0, 0), fx = ratioSmall, fy = ratioSmall)
     show_img(resizedImg)
 
     #Median Filter (Blur)
@@ -80,11 +81,13 @@ def get_paper(img):
         else:
             upLeft = point
 
+    height, width, depth = oriImg.shape
+    height = int(ratioLarge * height)
+    width = int(ratioLarge * width)
+
     #Perspective Transform
-    origPts = numpy.float32([upLeft[0] / ratio, lowLeft[0] / ratio, upRight[0] / ratio, lowRight[0] / ratio])
-    print origPts
+    origPts = numpy.float32([upLeft[0] / ratioSmall, lowLeft[0] / ratioSmall, upRight[0] / ratioSmall, lowRight[0] / ratioSmall])
     newPts = numpy.float32([[0, 0], [0, height - 1], [width - 1, 0], [width - 1, height - 1]])
-    print(newPts)
     mat = cv2.getPerspectiveTransform(origPts, newPts)
     workImg = cv2.warpPerspective(oriImg, mat, (width, height))
     return workImg
