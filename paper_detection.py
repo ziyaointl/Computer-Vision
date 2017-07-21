@@ -2,10 +2,9 @@ __author__ = 'zhangm2'
 
 import cv2
 import numpy
-
-def show_img(img):
-    cv2.imshow("Main", img)
-    cv2.waitKey()
+import imutil
+from imutil import show_img
+from preprocess import preprocess
 
 def get_paper(img):
     #Read in file and resize
@@ -14,22 +13,8 @@ def get_paper(img):
     resizedImg = cv2.resize(oriImg, (0, 0), fx = ratio, fy = ratio)
     show_img(resizedImg)
 
-    #Median Filter (Blur)
-    img = cv2.medianBlur(resizedImg, 11)
-    show_img(img)
-
-    #Morph Filter
-    st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, st, iterations=1)
-    show_img(img)
-
-    #Convert to gray scale
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    show_img(img)
-
-    #Canny
-    img = cv2.Canny(img, 100, 200)
-    show_img(img)
+    #Preprocess
+    img = preprocess(resizedImg)
 
     #Find contours
     ret, thresh = cv2.threshold(img, 127, 255, 0)
@@ -82,9 +67,7 @@ def get_paper(img):
 
     #Perspective Transform
     origPts = numpy.float32([upLeft[0] / ratio, lowLeft[0] / ratio, upRight[0] / ratio, lowRight[0] / ratio])
-    print origPts
     newPts = numpy.float32([[0, 0], [0, height - 1], [width - 1, 0], [width - 1, height - 1]])
-    print(newPts)
     mat = cv2.getPerspectiveTransform(origPts, newPts)
     workImg = cv2.warpPerspective(oriImg, mat, (width, height))
     return workImg
