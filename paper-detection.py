@@ -29,17 +29,6 @@ show_img(img)
 img = cv2.Canny(img, 100, 200)
 show_img(img)
 
-# #Line detection
-# lines = cv2.HoughLinesP(img, 1, numpy.pi/180,
-#                         threshold = 5,
-#                         minLineLength = 20, maxLineGap = 10)
-# for lineSet in lines:
-#     for line in lineSet:
-#         cv2.line(oriImg, (line[0], line[1]), (line[2], line[3]),
-#                  (255, 255, 0), thickness=5)
-#
-# show_img(oriImg)
-
 #Find contours
 ret, thresh = cv2.threshold(img, 127, 255, 0)
 imgCont, contrs, hier = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
