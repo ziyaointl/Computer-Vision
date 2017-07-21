@@ -8,7 +8,7 @@ def show_img(img):
     cv2.waitKey()
 
 #Read in file and resize
-oriImg = cv2.imread("assets/paper.jpg")
+oriImg = cv2.imread("assets/IMG-4860.JPG")
 oriImg = cv2.resize(oriImg, (0, 0), fx = .2, fy = .2)
 
 #Median Filter (Blur)
@@ -40,7 +40,7 @@ show_img(img)
 # show_img(oriImg)
 
 #Find contours
-ret, thresh = cv2.threshold(img,127,255,0)
+ret, thresh = cv2.threshold(img, 127, 255, 0)
 imgCont, contrs, hier = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
 finalContr = None
@@ -51,9 +51,28 @@ for x in range(len(contrs)):
     approx = cv2.approxPolyDP(contrs[x], epsilon, True)
     if (cv2.isContourConvex(approx)):
         area = abs(cv2.contourArea(approx))
-        if area > contrArea:
+        if area > contrArea and len(approx) == 4:
             finalContr = approx
             contrArea = area
+
+imgCenter = [[oriImg.shape[0] / 2, oriImg.shape[1] / 2]]
+
+lowLeft = imgCenter
+lowRight = imgCenter
+upLeft = imgCenter
+upRight = imgCenter
+
+for point in finalContr:
+    x = point[0][0]
+    y = point[0][1]
+    if (x >= lowRight[0][0] and y >= lowRight[0][1]):
+        lowRight = point
+    elif (x <= lowLeft[0][0] and y >= lowLeft[0][1]):
+        lowLeft = point
+    elif (x >= upRight[0][0] and y <= upRight[0][1]):
+        upRight = point
+    else:
+        upLeft = point
 
 contrs = [finalContr]
 cv2.drawContours(oriImg, contrs, -1, (0, 255, 0), 3)
