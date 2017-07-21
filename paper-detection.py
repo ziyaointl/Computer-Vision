@@ -9,11 +9,12 @@ def show_img(img):
 
 #Read in file and resize
 oriImg = cv2.imread("assets/IMG-4863.JPG")
-oriImg = cv2.resize(oriImg, (0, 0), fx = .2, fy = .2)
-show_img(oriImg)
+ratio = .2
+resizedImg = cv2.resize(oriImg, (0, 0), fx = ratio, fy = ratio)
+show_img(resizedImg)
 
 #Median Filter (Blur)
-img = cv2.medianBlur(oriImg, 11)
+img = cv2.medianBlur(resizedImg, 11)
 show_img(img)
 
 #Morph Filter
@@ -47,17 +48,17 @@ for x in range(len(contrs)):
 
 # Draw Contours & corners
 contrs = [finalContr]
-cv2.drawContours(oriImg, contrs, -1, (0, 255, 0), 3)
+cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
 
 for point in finalContr:
     x = point[0][0]
     y = point[0][1]
-    cv2.circle(oriImg, (x, y), 5, (255, 0, 255))
+    cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
 
-show_img(oriImg)
+show_img(resizedImg)
 
 #Calculate image dimensions
-height, width, depth = oriImg.shape
+height, width, depth = resizedImg.shape
 imgCenter = [[width / 2, height / 2]]
 
 #Assign each corner
@@ -79,10 +80,10 @@ for point in finalContr:
         upLeft = point
 
 #Perspective Transform
-origPts = numpy.float32([upLeft[0], lowLeft[0], upRight[0], lowRight[0]])
+origPts = numpy.float32([upLeft[0] / ratio, lowLeft[0] / ratio, upRight[0] / ratio, lowRight[0] / ratio])
+print origPts
 newPts = numpy.float32([[0, 0], [0, height - 1], [width - 1, 0], [width - 1, height - 1]])
 print(newPts)
 mat = cv2.getPerspectiveTransform(origPts, newPts)
 workImg = cv2.warpPerspective(oriImg, mat, (width, height))
-
 show_img(workImg)
