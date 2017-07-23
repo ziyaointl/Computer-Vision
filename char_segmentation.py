@@ -28,8 +28,13 @@ validContrs = []
 for i in range(len(contrs)):
     if hier[0][i][3] != -1:
         validContrs.append(contrs[i])
-        x,y,w,h = cv2.boundingRect(contrs[i])
-        cv2.rectangle(paper, (x, y), (x+w, y+h), (0, 255, 0), 1)
 
-# cv2.drawContours(paper, contrs, -1, (0, 255, 0), 1)
+# Sort contours
+validContrs, boundingBoxes = imutil.sort_contours(validContrs)
+
+# Draw bounding boxes
+for boundingBox in boundingBoxes:
+    x, y, w, h = boundingBox
+    cv2.rectangle(paper, (x, y), (x+w, y+h), (0, 255, 0), 1)
+
 show_img(paper)
