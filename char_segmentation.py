@@ -65,6 +65,23 @@ def get_chars(img):
                 chars.append(validContr)
         charsInRows.append(chars)
 
+    # Sort characters
+    for a in range(len(charsInRows)):
+        charsInRows[a], boundingBoxes = imutil.sort_contours(charsInRows[a])
+
+        # Detect character i and merge it (threshold +-2px)
+        for b in range(len(boundingBoxes) - 1):
+            currBox = boundingBoxes[b]
+            nextBox = boundingBoxes[b + 1]
+            if currBox[0] >= nextBox[0] - 2 and currBox[0] <= nextBox[0] + 2:
+                x = currBox[0]
+                y = min(currBox[1], nextBox[1])
+                w = max(currBox[0] + currBox[2], nextBox[0] + nextBox[2]) - x
+                h = max(currBox[1] + currBox[3], nextBox[1] + nextBox[3]) - y
+                cv2.rectangle(paper, (x, y), (x+w, y+h), (0, 255, 0), 1)
+        show_img(paper)
+        print(boundingBoxes)
+
     # Draw bounding boxes for rows
     for boundingBox in rowBoundingBoxes:
         a, b, w, h = boundingBox
