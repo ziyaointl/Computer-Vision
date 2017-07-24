@@ -21,11 +21,10 @@ def get_rows(img):
         if hier[0][i][3] != -1:
             validContrs.append(contrs[i])
 
-    # Bounding boxes
-    for x in range(len(validContrs)):
-        validContrs[x] = cv2.boundingRect(validContrs[x])
+    # Sort contours
+    validContrs, boundingBoxes = imutil.sort_contours(validContrs, method="top-to-bottom")
 
-    return validContrs
+    return boundingBoxes
 
 def get_chars(img):
     paper = paper_detection.get_paper(img)
@@ -51,15 +50,25 @@ def get_chars(img):
         if hier[0][i][3] != -1:
             validContrs.append(contrs[i])
 
+    # Find rows
     rowBoundingBoxes = get_rows(img)
 
-    # # Sort contours
-    # validContrs, boundingBoxes = imutil.sort_contours(validContrs)
+    # Put characters in rows
+    charsInRows = []
+    for row in rowBoundingBoxes:
+        a, b, w, h = row
+        chars = []
+        for validContr in validContrs:
+            charBoundingBox = cv2.boundingRect(validContr)
+            center = (charBoundingBox[0] + charBoundingBox[2] / 2, charBoundingBox[1] + charBoundingBox[3] / 2)
+            if center[0] > a and center[0] < a + w and center[1] > b and center[1] < b + h:
+                chars.append(validContr)
+        charsInRows.append(chars)
 
-    # Draw bounding boxes
+    # Draw bounding boxes for rows
     for boundingBox in rowBoundingBoxes:
-        x, y, w, h = boundingBox
-        cv2.rectangle(paper, (x, y), (x+w, y+h), (0, 255, 0), 1)
+        a, b, w, h = boundingBox
+        cv2.rectangle(paper, (a, b), (a+w, b+h), (0, 255, 0), 1)
     show_img(paper)
 
     return validContrs
