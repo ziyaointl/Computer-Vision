@@ -50,6 +50,8 @@ def get_chars(img):
         if hier[0][i][3] != -1:
             validContrs.append(contrs[i])
 
+
+
     # Find rows
     rowBoundingBoxes = get_rows(img)
 
@@ -65,30 +67,47 @@ def get_chars(img):
                 chars.append(validContr)
         charsInRows.append(chars)
 
-    # Sort characters
-    for a in range(len(charsInRows)):
-        charsInRows[a], boundingBoxes = imutil.sort_contours(charsInRows[a])
-
-        # Detect character i and merge it (threshold +-2px)
-        for b in range(len(boundingBoxes) - 1):
-            currBox = boundingBoxes[b]
-            nextBox = boundingBoxes[b + 1]
-            if currBox[0] >= nextBox[0] - 2 and currBox[0] <= nextBox[0] + 2:
-                x = currBox[0]
-                y = min(currBox[1], nextBox[1])
-                w = max(currBox[0] + currBox[2], nextBox[0] + nextBox[2]) - x
-                h = max(currBox[1] + currBox[3], nextBox[1] + nextBox[3]) - y
-                cv2.rectangle(paper, (x, y), (x+w, y+h), (0, 255, 0), 1)
-        show_img(paper)
-        print(boundingBoxes)
-
-    # Draw bounding boxes for rows
-    for boundingBox in rowBoundingBoxes:
-        a, b, w, h = boundingBox
-        cv2.rectangle(paper, (a, b), (a+w, b+h), (0, 255, 0), 1)
+    # Draw countours for testing
+    for row in charsInRows:
+        cv2.drawContours(paper, row, -1, (255, 0, 0))
     show_img(paper)
-
-    return validContrs
-
+#
+#     # Sort characters
+#     for a in range(len(charsInRows)):
+#         charsInRows[a], tempBoundingBoxes = imutil.sort_contours(charsInRows[a])
+#         charBoundingBoxes = []
+#
+#         # Detect character i and merge it (threshold +-2px)
+#         b = 0
+#         while b < len(tempBoundingBoxes) - 1:
+#             currBox = tempBoundingBoxes[b]
+#             nextBox = tempBoundingBoxes[b + 1]
+#             if currBox[0] >= nextBox[0] - 2 and currBox[0] <= nextBox[0] + 2:
+#                 x = currBox[0]
+#                 y = min(currBox[1], nextBox[1])
+#                 w = max(currBox[0] + currBox[2], nextBox[0] + nextBox[2]) - x
+#                 h = max(currBox[1] + currBox[3], nextBox[1] + nextBox[3]) - y
+#                 charBoundingBoxes.append((x, y, w, h))
+#                 b += 2
+#             else:
+#                 charBoundingBoxes.append(currBox)
+#                 b += 1
+#
+#         charsInRows[a] = charBoundingBoxes
+#
+#     # Draw bounding boxes for rows
+#     for row in charsInRows:
+#         for boundingBox in row:
+#             a, b, w, h = boundingBox
+#             cv2.rectangle(paper, (a, b), (a+w, b+h), (0, 255, 0), 1)
+#     show_img(paper)
+#
+#     for boundingBox in rowBoundingBoxes:
+#         a, b, w, h = boundingBox
+#         cv2.rectangle(paper, (a, b), (a+w, b+h), (0, 255, 0), 1)
+#     show_img(paper)
+#
+#     return charsInRows
+#
 img = cv2.imread("assets/ipsum.jpg")
 get_chars(img)
