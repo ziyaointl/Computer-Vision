@@ -38,4 +38,4 @@ def get_chars(img):
         cv2.rectangle(paper, (x, y), (x+w, y+h), (0, 255, 0), 1)
     show_img(paper)
 
-    return validContrs
+    return boundingBoxes
