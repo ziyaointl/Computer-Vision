@@ -91,8 +91,6 @@ def get_chars(img):
                 charBoundingBoxes.append(currBox)
                 b += 1
 
-        print lastI
-        print len(tempBoundingBoxes) - 2
         if lastI != len(tempBoundingBoxes) - 2:
             charBoundingBoxes.append(tempBoundingBoxes[len(tempBoundingBoxes) - 1])
         charsInRows[a] = charBoundingBoxes
