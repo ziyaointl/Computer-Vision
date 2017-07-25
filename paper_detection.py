@@ -13,24 +13,29 @@ def get_paper(img):
     ratioSmall = .2
     ratioLarge = .5
     resizedImg = cv2.resize(oriImg, (0, 0), fx = ratioSmall, fy = ratioSmall)
-    show_img(resizedImg)
+    if (__debug__):
+        show_img(resizedImg)
 
     #Median Filter (Blur)
     img = cv2.medianBlur(resizedImg, 11)
-    show_img(img)
+    if (__debug__):
+        show_img(img)
 
     #Morph Filter
     st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, st, iterations=1)
-    show_img(img)
+    if (__debug__):
+        show_img(img)
 
     #Convert to gray scale
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    show_img(img)
+    if (__debug__):
+        show_img(img)
 
     #Canny
     img = cv2.Canny(img, 100, 200)
-    show_img(img)
+    if (__debug__):
+        show_img(img)
 
     #Find contours
     ret, thresh = cv2.threshold(img, 127, 255, 0)
@@ -57,7 +62,8 @@ def get_paper(img):
         y = point[0][1]
         cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
 
-    show_img(resizedImg)
+    if (__debug__):
+        show_img(resizedImg)
 
     #Calculate image dimensions
     height, width, depth = resizedImg.shape
