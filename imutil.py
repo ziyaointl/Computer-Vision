@@ -1,6 +1,7 @@
 __author__ = 'zhangm2'
 
 import cv2
+import numpy
 
 def show_img(img):
     cv2.imshow("Main", img)
@@ -35,3 +36,10 @@ def sort_contours(cnts, method="left-to-right"):
 
     # return the list of sorted contours and bounding boxes
     return (cnts, boundingBoxes)
+
+def getBoundedImg(img, boundingBox):
+    show_img(img)
+    x, y, w, h = boundingBox
+    subImg = img[y:y+h, x:x+w]
+    show_img(subImg)
+    return subImg

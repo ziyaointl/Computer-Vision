@@ -50,8 +50,6 @@ def get_chars(img):
         if hier[0][i][3] != -1:
             validContrs.append(contrs[i])
 
-
-
     # Find rows
     rowBoundingBoxes = get_rows(img)
 
