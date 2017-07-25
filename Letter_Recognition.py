@@ -46,7 +46,8 @@ for i in range(len(rawData)):
 #print data
 data = np.array(data)
 labels = np.array(labels)
-#data = np.float32(data)
+data = np.float32(data)
+labels = np.float32(labels)
 
 print labels.shape
 print type(labels[0])
@@ -60,6 +61,6 @@ ret, result, neighbours, dist = knn.findNearest(data, k=5)
 
 correct = np.count_nonzero(result == labels)
 accuracy = correct*100.0/10000
-#print(accuracy)
+print(accuracy)
 
 
