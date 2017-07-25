@@ -61,7 +61,13 @@ def get_paper(img):
 
     #Calculate image dimensions
     height, width, depth = resizedImg.shape
-    imgCenter = [[width / 2, height / 2]]
+
+    maxX = max(finalContr[0][0][0], finalContr[1][0][0], finalContr[2][0][0], finalContr[3][0][0])
+    maxY = max(finalContr[0][0][1], finalContr[1][0][1], finalContr[2][0][1], finalContr[3][0][1])
+    minX = min((finalContr[0][0][0], finalContr[1][0][0], finalContr[2][0][0], finalContr[3][0][0]))
+    minY = min(finalContr[0][0][1], finalContr[1][0][1], finalContr[2][0][1], finalContr[3][0][1])
+
+    imgCenter = [[(maxX - minX) / 2, (maxY - minY) / 2]]
 
     #Assign each corner
     lowLeft = imgCenter
