@@ -93,19 +93,7 @@ def get_chars(img):
             charBoundingBoxes.append(tempBoundingBoxes[len(tempBoundingBoxes) - 1])
         charsInRows[a] = charBoundingBoxes
 
-    # Draw bounding boxes for rows
-    for row in charsInRows:
-        for boundingBox in row:
-            a, b, w, h = boundingBox
-            cv2.rectangle(paper, (a, b), (a+w, b+h), (0, 255, 0), 1)
-    show_img(paper)
-
-    for boundingBox in rowBoundingBoxes:
-        a, b, w, h = boundingBox
-        cv2.rectangle(paper, (a, b), (a+w, b+h), (0, 255, 0), 1)
-    show_img(paper)
-
-    return charsInRows
+    return charsInRows, paper
 
 img = cv2.imread("assets/ipsum.jpg")
 get_chars(img)
