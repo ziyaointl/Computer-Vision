@@ -65,15 +65,19 @@ correct = np.count_nonzero(result == labels)
 accuracy = correct*100.0/10000
 #print(accuracy)
 
+print "finished training"
 '----------------------------------------------------------------------------------------------------------------------'
 
 #src = cv2.imread("assets/Letters/letterE.jpg", 0)
 
-img = cv2.imread("assets/ipsum.jpg")
+#img = cv2.imread("assets/ipsum.jpg")
+img = cv2.imread("assets/Letters/sentences.JPG")
 listOfChars, img = char_segmentation.get_chars(img)
-image = imutil.getBoundedImg(img, listOfChars[0][8])
+image = imutil.getBoundedImg(img, listOfChars[0][2])
 gray = imutil.to_gray_scale(image)
 #imutil.show_img(image)
+
+print "loaded gray image"
 
 cv2.imshow("orig", gray)
 cv2.waitKey()
@@ -87,30 +91,33 @@ cv2.waitKey()
 
 st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
 erode = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, st, iterations=3)
-cv2.imshow("erode", erode)
-cv2.waitKey()
+#cv2.imshow("erode", erode)
+#cv2.waitKey()
 
 width, height = erode.shape
-cv2.waitKey()
+
+print "morphed image"
 
 if(np.count_nonzero(erode)>(width*height)/2):
     res, thresh = cv2.threshold(erode, 115, 255, cv2.THRESH_BINARY)
     #print thresh
-    cv2.imshow("thresh", thresh)
-    cv2.waitKey()
+    #cv2.imshow("thresh", thresh)
+    # cv2.waitKey()
     resized = cv2.resize(thresh, (20, 20))
 else:
     resized = cv2.resize(erode, (20, 20))
 
-cv2.imshow("resized", resized)
-cv2.waitKey(0)
-
-reshaped = np.reshape(resized, (1, 400))
-#cv2.imshow("reshaped", reshaped)
+#cv2.imshow("resized", resized)
 #cv2.waitKey(0)
 
+reshaped = np.reshape(resized, (1, 400))
+cv2.imshow("reshaped", reshaped)
+cv2.waitKey(0)
+print "reshaped image"
 
 retype = np.float32(reshaped)
+#nbrs = []
+
 retval, results, neighborResponses, dists = knn.findNearest(retype, k=3)
 
 print
@@ -118,12 +125,15 @@ print "The retval is " + str(retval)
 print "This is a " + str(types[int(retval)])
 print
 print results.shape
-#print retval
-#print results
+print retval
+print results
+print
 
-print neighborResponses
+
+print "Neighbor responeses: ", neighborResponses
 for num in neighborResponses[0]:
     print types[int(num)]
+
 #print dists
 
 
