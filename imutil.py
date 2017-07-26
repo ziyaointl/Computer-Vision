@@ -2,6 +2,7 @@ __author__ = 'zhangm2'
 
 import cv2
 import numpy
+import sys
 
 debug = False
 
@@ -57,19 +58,34 @@ def getLargestContourIndex(contrs):
 
     return maxIndex
 
+def mergeBoundingBoxes(boxes):
+    maxX = 0
+    maxY = 0
+    minX = sys.maxint
+    minY = sys.maxint
+    for box in boxes:
+        x, y, w, h = box
+        if (x + w > maxX):
+            maxX = x + w
+        if (y + h > maxY):
+            maxY = y + h
+        if (y < minY):
+            minY = y
+        if (x < minX):
+            minX = x
+    return (minX, minY, maxX - minX, maxY - minY)
+
 def get_char_simple(img):
     # Find contours
     tempImg = img.copy()
     mgCont, contrs, hier = cv2.findContours(tempImg, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
     # Filter contours
-    validContrs = []
+    validBoxes = []
     for i in range(len(contrs)):
         if hier[0][i][3] != -1:
-            validContrs.append(contrs[i])
+            validBoxes.append(cv2.boundingRect(contrs[i]))
 
-    cv2.drawContours(img, validContrs, -1, (255, 0, 0), thickness=5)
-
-    boundingBox = cv2.boundingRect(validContrs[0])
+    boundingBox = mergeBoundingBoxes(validBoxes)
 
     return getBoundedImg(img, boundingBox)
