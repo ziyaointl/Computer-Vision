@@ -42,3 +42,25 @@ def getBoundedImg(img, boundingBox):
     subImg = img[y:y+h, x:x+w]
     show_img(subImg)
     return subImg
+
+def get_char_simple(img):
+    # Find contours
+    tempImg = img.copy()
+    mgCont, contrs, hier = cv2.findContours(tempImg, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Filter contours
+    validContrs = []
+    for i in range(len(contrs)):
+        if hier[0][i][3] != -1:
+            validContrs.append(contrs[i])
+
+    cv2.drawContours(img, validContrs, -1, (255, 0, 0), thickness=5)
+
+    boundingBox = cv2.boundingRect(validContrs[0])
+
+    return getBoundedImg(img, boundingBox)
+
+
+img = cv2.imread("assets/letter A.png")
+img = to_gray_scale(img)
+get_char_simple(img)
