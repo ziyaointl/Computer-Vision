@@ -46,6 +46,17 @@ def getBoundedImg(img, boundingBox):
         show_img(subImg)
     return subImg
 
+def getLargestContourIndex(contrs):
+    maxArea = 0
+    maxIndex = 0
+    for x in range(len(contrs)):
+        x, y, w, h = cv2.boundingRect(contrs[x])
+        if w * h > maxArea:
+            maxArea = w * h
+            maxIndex = x
+
+    return maxIndex
+
 def get_char_simple(img):
     # Find contours
     tempImg = img.copy()
