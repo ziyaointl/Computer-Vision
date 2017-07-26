@@ -3,7 +3,7 @@ __author__ = 'smithe3'
 import cv2
 import numpy as np
 
-with open("DataSet.txt", "w+") as doc:
+with open("assets/DataSet.txt", "w") as doc:
 
     letters = []
 
@@ -42,6 +42,11 @@ with open("DataSet.txt", "w+") as doc:
 
     for letter in letters:
         cropped = str(letter)[2:len(str(letter))-2]
+        print type(cropped)
         doc.write(cropped)
+        doc.write("\n")
+        if(len(cropped) != 1643):
+            print len(cropped)
 
+doc.close()
 
