@@ -98,4 +98,12 @@ def get_chars(img):
             charBoundingBoxes.append(tempBoundingBoxes[len(tempBoundingBoxes) - 1])
         charsInRows[a] = charBoundingBoxes
 
+    # Draw bounding boxes
+    if (debug):
+        for row in charsInRows:
+            for char in row:
+                x, y, w, h = char
+                cv2.rectangle(paper, (x, y), (x + w, y + h), (0, 255, 0))
+        show_img(paper)
+
     return charsInRows, paper
