@@ -3,6 +3,8 @@ __author__ = 'zhangm2'
 import cv2
 import numpy
 
+debug = False
+
 def show_img(img):
     cv2.imshow("Main", img)
     cv2.waitKey()
@@ -13,28 +15,28 @@ def get_paper(img):
     ratioSmall = .2
     ratioLarge = .5
     resizedImg = cv2.resize(oriImg, (0, 0), fx = ratioSmall, fy = ratioSmall)
-    if (__debug__):
+    if (debug):
         show_img(resizedImg)
 
     #Median Filter (Blur)
     img = cv2.medianBlur(resizedImg, 11)
-    if (__debug__):
+    if (debug):
         show_img(img)
 
     #Morph Filter
     st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, st, iterations=1)
-    if (__debug__):
+    if (debug):
         show_img(img)
 
     #Convert to gray scale
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    if (__debug__):
+    if (debug):
         show_img(img)
 
     #Canny
     img = cv2.Canny(img, 100, 200)
-    if (__debug__):
+    if (debug):
         show_img(img)
 
     #Find contours
@@ -62,7 +64,7 @@ def get_paper(img):
         y = point[0][1]
         cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
 
-    if (__debug__):
+    if (debug):
         show_img(resizedImg)
 
     #Calculate image dimensions

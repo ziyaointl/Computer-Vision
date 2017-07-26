@@ -5,11 +5,13 @@ import paper_detection
 import imutil
 from imutil import show_img
 
+debug = False
+
 def get_rows(img):
     # Morph Filter
     st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
     img = cv2.morphologyEx(img, cv2.MORPH_ERODE, st, iterations=3)
-    if (__debug__):
+    if (debug):
         show_img(img)
 
     # Find contours
@@ -29,7 +31,7 @@ def get_rows(img):
 
 def get_chars(img):
     paper = paper_detection.get_paper(img)
-    if (__debug__):
+    if (debug):
         show_img(paper)
 
     # Convert to gray scale
@@ -40,7 +42,7 @@ def get_chars(img):
 
     # OTSU binarize
     img = imutil.otsu(img)
-    if (__debug__):
+    if (debug):
         show_img(img)
 
     # Find contours
@@ -97,6 +99,3 @@ def get_chars(img):
         charsInRows[a] = charBoundingBoxes
 
     return charsInRows, paper
-
-img = cv2.imread("assets/ipsum.jpg")
-get_chars(img)
