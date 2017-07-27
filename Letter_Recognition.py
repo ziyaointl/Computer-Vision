@@ -11,6 +11,7 @@ doc = open("assets/DataSet.txt", "r")
 labels = []
 rawData = []
 data = []
+string = []
 types = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
          "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 
@@ -25,12 +26,12 @@ for i in range(62):
         temp = ""
         for k in range(23):
             temp += doc.readline()
-            counter = counter+1
+            counter += 1
 
-        if (len(temp)!=1644):
+        if len(temp) != 1644:
             print "length " + str(len(temp))
             print "counter position " + str(counter)
-            print
+
         #print len(temp)
         rawData.append(temp)
 
@@ -65,15 +66,18 @@ correct = np.count_nonzero(result == labels)
 accuracy = correct*100.0/10000
 #print(accuracy)
 
-print "finished training"
-'----------------------------------------------------------------------------------------------------------------------'
+print "--------------------finished training--------------------"
 
 #src = cv2.imread("assets/Letters/letterE.jpg", 0)
 
 #img = cv2.imread("assets/ipsum.jpg")
 img = cv2.imread("assets/Letters/sentences.JPG")
 listOfChars, img = char_segmentation.get_chars(img)
-image = imutil.getBoundedImg(img, listOfChars[0][2])
+
+#for i in range(len(listOfChars[0])):
+
+
+image = imutil.getBoundedImg(img, listOfChars[0][0])
 gray = imutil.to_gray_scale(image)
 #imutil.show_img(image)
 
@@ -96,7 +100,7 @@ erode = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, st, iterations=3)
 
 width, height = erode.shape
 
-print "morphed image"
+# print "morphed image"
 
 if(np.count_nonzero(erode)>(width*height)/2):
     res, thresh = cv2.threshold(erode, 115, 255, cv2.THRESH_BINARY)
@@ -113,26 +117,30 @@ else:
 reshaped = np.reshape(resized, (1, 400))
 cv2.imshow("reshaped", reshaped)
 cv2.waitKey(0)
-print "reshaped image"
+# print "reshaped image"
 
 retype = np.float32(reshaped)
 #nbrs = []
 
 retval, results, neighborResponses, dists = knn.findNearest(retype, k=3)
 
-print
+
 print "The retval is " + str(retval)
 print "This is a " + str(types[int(retval)])
-print
+string += str(types[int(retval)])
+
+
 print results.shape
 print retval
 print results
-print
 
 
-print "Neighbor responeses: ", neighborResponses
+
+print "Neighbor responses: ", neighborResponses
 for num in neighborResponses[0]:
     print types[int(num)]
+
+print string
 
 #print dists
 
