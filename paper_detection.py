@@ -3,7 +3,7 @@ __author__ = 'zhangm2'
 import cv2
 import numpy
 
-debug = True
+debug = False
 
 def show_img(img):
     cv2.imshow("Main", img)
@@ -35,7 +35,7 @@ def get_paper(img):
         show_img(img)
 
     #Canny
-    img = cv2.Canny(img, 100, 200)
+    img = cv2.Canny(img, 50, 200)
     if (debug):
         show_img(img)
 
@@ -56,26 +56,24 @@ def get_paper(img):
                 contrArea = area
 
     # Draw Contours & corners
-    contrs = [finalContr]
-    cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
-
-    for point in finalContr:
-        x = point[0][0]
-        y = point[0][1]
-        cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
-
     if (debug):
+        contrs = [finalContr]
+        cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
+
+        for point in finalContr:
+            x = point[0][0]
+            y = point[0][1]
+            cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
+
         show_img(resizedImg)
 
     #Calculate image dimensions
-    height, width, depth = resizedImg.shape
-
     maxX = max(finalContr[0][0][0], finalContr[1][0][0], finalContr[2][0][0], finalContr[3][0][0])
     maxY = max(finalContr[0][0][1], finalContr[1][0][1], finalContr[2][0][1], finalContr[3][0][1])
     minX = min((finalContr[0][0][0], finalContr[1][0][0], finalContr[2][0][0], finalContr[3][0][0]))
     minY = min(finalContr[0][0][1], finalContr[1][0][1], finalContr[2][0][1], finalContr[3][0][1])
 
-    imgCenter = [[(maxX - minX) / 2, (maxY - minY) / 2]]
+    imgCenter = [[(maxX + minX) / 2, (maxY + minY) / 2]]
 
     #Assign each corner
     lowLeft = imgCenter
@@ -86,13 +84,13 @@ def get_paper(img):
     for point in finalContr:
         x = point[0][0]
         y = point[0][1]
-        if (x >= lowRight[0][0] and y >= lowRight[0][1]):
+        if (x >= imgCenter[0][0] and y >= imgCenter[0][1]):
             lowRight = point
-        elif (x <= lowLeft[0][0] and y >= lowLeft[0][1]):
+        elif (x <= imgCenter[0][0] and y >= imgCenter[0][1]):
             lowLeft = point
-        elif (x >= upRight[0][0] and y <= upRight[0][1]):
+        elif (x >= imgCenter[0][0] and y <= imgCenter[0][1]):
             upRight = point
-        else:
+        elif (x <= imgCenter[0][0] and y <= imgCenter[0][1]):
             upLeft = point
 
     height, width, depth = oriImg.shape
