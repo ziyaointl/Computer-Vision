@@ -52,7 +52,7 @@ print "--------------------finished training--------------------"
 
 string = ""
 
-img = cv2.imread("assets/Letters/ComicTest1.JPG")
+img = cv2.imread("assets/exampleText.JPG")
 listOfChars, img, space = char_segmentation.get_chars(img)
 
 for j in range(len(listOfChars)):
