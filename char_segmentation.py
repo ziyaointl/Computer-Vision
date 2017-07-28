@@ -114,7 +114,7 @@ def get_chars(img):
             # print charsInRows[0][i]
             # print "Dist cal."
             distance = charsInRows[j][i+1][0] - charsInRows[j][i][0] - charsInRows[j][i][2]
-            if distance >= 7:
+            if distance >= 6:
                 spaceRow.append(1)
             else:
                 spaceRow.append(0)
