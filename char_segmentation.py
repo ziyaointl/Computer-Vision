@@ -5,7 +5,7 @@ import paper_detection
 import imutil
 from imutil import show_img
 
-debug = True
+debug = False
 
 def get_rows(img):
     # Morph Filter
@@ -76,14 +76,17 @@ def get_chars(img):
     for a in range(len(charsInRows)):
         charsInRows[a], tempBoundingBoxes = imutil.sort_contours(charsInRows[a])
 
-        # Detect character i and merge it (threshold +-2px)
+        # Detect character i or j and merge it (threshold +-2px)
         charBoundingBoxes = []
         b = 0
         lastI = 0
         while b < len(tempBoundingBoxes) - 1:
             currBox = tempBoundingBoxes[b]
             nextBox = tempBoundingBoxes[b + 1]
-            if currBox[0] >= nextBox[0] - 2 and currBox[0] <= nextBox[0] + 2:
+            currBoxCenterX = currBox[0] + (currBox[2] / 2)
+            print currBoxCenterX
+            print nextBox
+            if currBoxCenterX > nextBox[0] and currBoxCenterX < nextBox[0] + nextBox[2]:
                 x = currBox[0]
                 y = min(currBox[1], nextBox[1])
                 w = max(currBox[0] + currBox[2], nextBox[0] + nextBox[2]) - x
@@ -114,7 +117,7 @@ def get_chars(img):
             # print charsInRows[0][i]
             # print "Dist cal."
             distance = charsInRows[j][i+1][0] - charsInRows[j][i][0] - charsInRows[j][i][2]
-            if distance >= 6:
+            if distance >= 7:
                 spaceRow.append(1)
             else:
                 spaceRow.append(0)
