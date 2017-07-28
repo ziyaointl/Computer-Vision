@@ -3,7 +3,7 @@ __author__ = 'zhangm2'
 import cv2
 import numpy
 
-debug = False
+debug = True
 
 def show_img(img):
     cv2.imshow("Main", img)
