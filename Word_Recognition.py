@@ -11,8 +11,7 @@ labels = []
 rawData = []
 data = []
 string = []
-types = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-         "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+types = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
 
 for i in range(62):
@@ -26,11 +25,9 @@ for i in range(62):
         for k in range(23):
             temp += doc.readline()
             counter += 1
-
         if len(temp) != 1644:
             print "length " + str(len(temp))
             print "counter position " + str(counter)
-
         rawData.append(temp)
 
 for i in range(len(rawData)):
@@ -38,7 +35,6 @@ for i in range(len(rawData)):
     for j in range(len(temp)):
         temp[j] = int(temp[j])
     data.append(temp)
-
 
 data = np.array(data)
 labels = np.array(labels)
@@ -52,15 +48,11 @@ ret, result, neighbours, dist = knn.findNearest(data, k=5)
 correct = np.count_nonzero(result == labels)
 accuracy = correct*100.0/10000
 
-
 print "--------------------finished training--------------------"
 
 string = ""
 
-#src = cv2.imread("assets/Letters/letterE.jpg", 0)
-#img = cv2.imread("assets/ipsum.jpg")
-
-img = cv2.imread("assets/exampleText.JPG")
+img = cv2.imread("assets/Letters/ComicTest1.JPG")
 listOfChars, img, space = char_segmentation.get_chars(img)
 
 for j in range(len(listOfChars)):
@@ -70,14 +62,10 @@ for j in range(len(listOfChars)):
 
         st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
         erode = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, st, iterations=3)
-
-
         width, height = erode.shape
 
-
-        if(np.count_nonzero(erode)>(width*height)/2):
+        if np.count_nonzero(erode) > (width*height)/2:
             res, thresh = cv2.threshold(erode, 115, 255, cv2.THRESH_BINARY)
-
             resized = cv2.resize(thresh, (20, 20))
         else:
             resized = cv2.resize(erode, (20, 20))
@@ -86,12 +74,10 @@ for j in range(len(listOfChars)):
         retype = np.float32(reshaped)
         retval, results, neighborResponses, dists = knn.findNearest(retype, k=3)
 
-        #print "This is a " + str(types[int(retval)])
         string += str(types[int(retval)])
         if i != len(listOfChars[j])-1:
             if space[j][i] == 1:
                 string += ' '
-
     string += "\n"
 print string
 
