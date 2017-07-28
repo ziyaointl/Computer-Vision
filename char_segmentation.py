@@ -75,14 +75,17 @@ def get_chars(img):
     for a in range(len(charsInRows)):
         charsInRows[a], tempBoundingBoxes = imutil.sort_contours(charsInRows[a])
 
-        # Detect character i and merge it (threshold +-2px)
+        # Detect character i or j and merge it (threshold +-2px)
         charBoundingBoxes = []
         b = 0
         lastI = 0
         while b < len(tempBoundingBoxes) - 1:
             currBox = tempBoundingBoxes[b]
             nextBox = tempBoundingBoxes[b + 1]
-            if currBox[0] >= nextBox[0] - 2 and currBox[0] <= nextBox[0] + 2:
+            currBoxCenterX = currBox[0] + (currBox[2] / 2)
+            print currBoxCenterX
+            print nextBox
+            if currBoxCenterX > nextBox[0] and currBoxCenterX < nextBox[0] + nextBox[2]:
                 x = currBox[0]
                 y = min(currBox[1], nextBox[1])
                 w = max(currBox[0] + currBox[2], nextBox[0] + nextBox[2]) - x
