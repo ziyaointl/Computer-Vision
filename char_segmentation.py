@@ -60,6 +60,7 @@ def get_chars(img):
 
     # Put characters in rows
     charsInRows = []
+    spaceBetweenLetters = []
     for row in rowBoundingBoxes:
         a, b, w, h = row
         chars = []
@@ -109,4 +110,19 @@ def get_chars(img):
                 cv2.rectangle(paper, (x, y), (x + w, y + h), (0, 255, 0))
         show_img(paper)
 
-    return charsInRows, paper
+
+    for j in range(len(charsInRows)):
+        spaceRow = []
+        for i in range(len(charsInRows[j])-1):
+            # print charsInRows[0][i]
+            # print "Dist cal."
+            distance = charsInRows[j][i+1][0] - charsInRows[j][i][0] - charsInRows[j][i][2]
+            if distance >= 7:
+                spaceRow.append(1)
+            else:
+                spaceRow.append(0)
+
+        spaceBetweenLetters.append(spaceRow)
+        spaceRow = []
+
+    return charsInRows, paper, spaceBetweenLetters
