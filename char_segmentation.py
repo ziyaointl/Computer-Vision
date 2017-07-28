@@ -60,6 +60,7 @@ def get_chars(img):
 
     # Put characters in rows
     charsInRows = []
+    spaceBetweenLetters = []
     for row in rowBoundingBoxes:
         a, b, w, h = row
         chars = []
@@ -75,14 +76,17 @@ def get_chars(img):
     for a in range(len(charsInRows)):
         charsInRows[a], tempBoundingBoxes = imutil.sort_contours(charsInRows[a])
 
-        # Detect character i and merge it (threshold +-2px)
+        # Detect character i or j and merge it (threshold +-2px)
         charBoundingBoxes = []
         b = 0
         lastI = 0
         while b < len(tempBoundingBoxes) - 1:
             currBox = tempBoundingBoxes[b]
             nextBox = tempBoundingBoxes[b + 1]
-            if currBox[0] >= nextBox[0] - 2 and currBox[0] <= nextBox[0] + 2:
+            currBoxCenterX = currBox[0] + (currBox[2] / 2)
+            print currBoxCenterX
+            print nextBox
+            if currBoxCenterX > nextBox[0] and currBoxCenterX < nextBox[0] + nextBox[2]:
                 x = currBox[0]
                 y = min(currBox[1], nextBox[1])
                 w = max(currBox[0] + currBox[2], nextBox[0] + nextBox[2]) - x
@@ -98,4 +102,27 @@ def get_chars(img):
             charBoundingBoxes.append(tempBoundingBoxes[len(tempBoundingBoxes) - 1])
         charsInRows[a] = charBoundingBoxes
 
-    return charsInRows, paper
+    # Draw bounding boxes
+    if (debug):
+        for row in charsInRows:
+            for char in row:
+                x, y, w, h = char
+                cv2.rectangle(paper, (x, y), (x + w, y + h), (0, 255, 0))
+        show_img(paper)
+
+
+    for j in range(len(charsInRows)):
+        spaceRow = []
+        for i in range(len(charsInRows[j])-1):
+            # print charsInRows[0][i]
+            # print "Dist cal."
+            distance = charsInRows[j][i+1][0] - charsInRows[j][i][0] - charsInRows[j][i][2]
+            if distance >= 7:
+                spaceRow.append(1)
+            else:
+                spaceRow.append(0)
+
+        spaceBetweenLetters.append(spaceRow)
+        spaceRow = []
+
+    return charsInRows, paper, spaceBetweenLetters

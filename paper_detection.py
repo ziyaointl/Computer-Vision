@@ -3,7 +3,7 @@ __author__ = 'zhangm2'
 import cv2
 import numpy
 
-debug = False
+debug = True
 
 def show_img(img):
     cv2.imshow("Main", img)
@@ -35,7 +35,7 @@ def get_paper(img):
         show_img(img)
 
     #Canny
-    img = cv2.Canny(img, 100, 200)
+    img = cv2.Canny(img, 50, 200)
     if (debug):
         show_img(img)
 

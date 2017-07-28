@@ -33,7 +33,7 @@ accuracy = correct*100.0/result.size
 print( accuracy )
 
 
-src = cv2.imread("assets/Numbers/PoorlyDrawn4.jpg", 0)
+src = cv2.imread("assets/Numbers/dark1.jpg", 0)
 cv2.imshow("orig", src)
 cv2.waitKey()
 

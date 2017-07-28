@@ -2,6 +2,9 @@ __author__ = 'zhangm2'
 
 import cv2
 import numpy
+import sys
+
+debug = False
 
 def show_img(img):
     cv2.imshow("Main", img)
@@ -40,5 +43,49 @@ def sort_contours(cnts, method="left-to-right"):
 def getBoundedImg(img, boundingBox):
     x, y, w, h = boundingBox
     subImg = img[y:y+h, x:x+w]
-    show_img(subImg)
+    if (debug):
+        show_img(subImg)
     return subImg
+
+def getLargestContourIndex(contrs):
+    maxArea = 0
+    maxIndex = 0
+    for x in range(len(contrs)):
+        x, y, w, h = cv2.boundingRect(contrs[x])
+        if w * h > maxArea:
+            maxArea = w * h
+            maxIndex = x
+
+    return maxIndex
+
+def mergeBoundingBoxes(boxes):
+    maxX = 0
+    maxY = 0
+    minX = sys.maxint
+    minY = sys.maxint
+    for box in boxes:
+        x, y, w, h = box
+        if (x + w > maxX):
+            maxX = x + w
+        if (y + h > maxY):
+            maxY = y + h
+        if (y < minY):
+            minY = y
+        if (x < minX):
+            minX = x
+    return (minX, minY, maxX - minX, maxY - minY)
+
+def get_char_simple(img):
+    # Find contours
+    tempImg = img.copy()
+    mgCont, contrs, hier = cv2.findContours(tempImg, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Filter contours
+    validBoxes = []
+    for i in range(len(contrs)):
+        if hier[0][i][3] != -1:
+            validBoxes.append(cv2.boundingRect(contrs[i]))
+
+    boundingBox = mergeBoundingBoxes(validBoxes)
+
+    return getBoundedImg(img, boundingBox)
