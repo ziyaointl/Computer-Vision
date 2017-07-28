@@ -56,15 +56,15 @@ def get_paper(img):
                 contrArea = area
 
     # Draw Contours & corners
-    contrs = [finalContr]
-    cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
-
-    for point in finalContr:
-        x = point[0][0]
-        y = point[0][1]
-        cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
-
     if (debug):
+        contrs = [finalContr]
+        cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
+
+        for point in finalContr:
+            x = point[0][0]
+            y = point[0][1]
+            cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
+
         show_img(resizedImg)
 
     #Calculate image dimensions
