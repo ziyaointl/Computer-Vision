@@ -11,7 +11,7 @@ def get_rows(img):
     # Morph Filter
     st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
     img = cv2.morphologyEx(img, cv2.MORPH_ERODE, st, iterations=3)
-    if (debug):
+    if debug:
         show_img(img)
 
     # Find contours
@@ -31,7 +31,7 @@ def get_rows(img):
 
 def get_chars(img):
     paper = paper_detection.get_paper(img)
-    if (debug):
+    if debug:
         show_img(paper)
 
     # Convert to gray scale
@@ -42,7 +42,7 @@ def get_chars(img):
 
     # OTSU binarize
     img = imutil.otsu(img)
-    if (debug):
+    if debug:
         show_img(img)
 
     # Find contours
@@ -103,7 +103,7 @@ def get_chars(img):
         charsInRows[a] = charBoundingBoxes
 
     # Draw bounding boxes
-    if (debug):
+    if debug:
         for row in charsInRows:
             for char in row:
                 x, y, w, h = char

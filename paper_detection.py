@@ -15,7 +15,7 @@ def get_paper(img):
     ratioSmall = .2
     ratioLarge = .5
     resizedImg = cv2.resize(oriImg, (0, 0), fx = ratioSmall, fy = ratioSmall)
-    if (debug):
+    if debug:
         show_img(resizedImg)
 
     #Median Filter (Blur)
@@ -31,12 +31,12 @@ def get_paper(img):
 
     #Convert to gray scale
     img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    if (debug):
+    if debug:
         show_img(img)
 
     #Canny
     img = cv2.Canny(img, 50, 200)
-    if (debug):
+    if debug:
         show_img(img)
 
     #Find contours
@@ -56,7 +56,7 @@ def get_paper(img):
                 contrArea = area
 
     # Draw Contours & corners
-    if (debug):
+    if debug:
         contrs = [finalContr]
         cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
 

@@ -43,7 +43,7 @@ def sort_contours(cnts, method="left-to-right"):
 def getBoundedImg(img, boundingBox):
     x, y, w, h = boundingBox
     subImg = img[y:y+h, x:x+w]
-    if (debug):
+    if debug:
         show_img(subImg)
     return subImg
 
