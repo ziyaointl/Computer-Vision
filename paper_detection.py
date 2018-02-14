@@ -93,3 +93,15 @@ def get_paper(img):
     mat = cv2.getPerspectiveTransform(origPts, newPts)
     workImg = cv2.warpPerspective(oriImg, mat, (width, height))
     return workImg
+
+def index_of_largest_contour(contours):
+    """Return the contour that has the largest area in a list of contours"""
+    largest_contour_index = 0
+    largest_area = -1
+    for i, contour in enumerate(contours):
+        area = cv2.contourArea(contour)
+        if area > largest_area:
+            largest_area = area
+            largest_contour_index = i
+    return largest_contour_index
+
