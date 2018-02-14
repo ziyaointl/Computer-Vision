@@ -29,21 +29,32 @@ def get_paper(img):
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     show_img(img)
 
-    #Find contours
+    # Find contours
     ret, thresh = cv2.threshold(img, 127, 255, 0)
     imgCont, contrs, hier = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
-    finalContr = None
-    contrArea = 0
+    # Find the largest contour
+    index_of_largest_contour = get_index_of_largest_contour(contrs)
+    largest_contour = contrs[index_of_largest_contour]
+    image_size = img.shape[0] * img.shape[1]
+    # TODO: convert this into a throw expression
+    # Assuming the paper takes up the majority of the screen.
+    # If the max-sized contour is too small compared to the image (<20%),
+    # we probably didn't find the paper.
+    if cv2.contourArea(largest_contour) / image_size < 0.2:
+        print('No contour of the right size found')
+        return
+    print('Contour found!')
 
-    for x in range(len(contrs)):
-        epsilon = 0.1*cv2.arcLength(contrs[x], True)
-        approx = cv2.approxPolyDP(contrs[x], epsilon, True)
-        if (cv2.isContourConvex(approx)):
-            area = abs(cv2.contourArea(approx))
-            if area > contrArea and len(approx) == 4:
-                finalContr = approx
-                contrArea = area
+    if debug:
+        cv2.drawContours(resizedImg, [contrs[index_of_largest_contour]], -1, (255, 0, 0), 3)
+        show_img(resizedImg)
+
+    # Approximate the answer region contour to a polygon
+    finalContr = get_answer_region_contour(contrs, hier[0], index_of_largest_contour, resizedImg)
+    epsilon = 0.1 * cv2.arcLength(finalContr, True)
+    finalContr = cv2.approxPolyDP(finalContr, epsilon, True)
+    # TODO: if this contour does not have exactly four points, throw an exception
 
     # Draw Contours & corners
     if debug:
@@ -94,7 +105,7 @@ def get_paper(img):
     workImg = cv2.warpPerspective(oriImg, mat, (width, height))
     return workImg
 
-def index_of_largest_contour(contours):
+def get_index_of_largest_contour(contours):
     """Return the contour that has the largest area in a list of contours"""
     largest_contour_index = 0
     largest_area = -1
