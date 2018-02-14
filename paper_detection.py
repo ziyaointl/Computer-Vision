@@ -15,26 +15,19 @@ def get_paper(img):
     if debug:
         show_img(resizedImg)
 
-    #Median Filter (Blur)
-    img = cv2.medianBlur(resizedImg, 11)
-    if (debug):
-        show_img(img)
-
-    #Morph Filter
-    st = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, st, iterations=1)
-    if (debug):
-        show_img(img)
-
     #Convert to gray scale
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    img = cv2.cvtColor(resizedImg, cv2.COLOR_RGB2GRAY)
     if debug:
         show_img(img)
 
-    #Canny
-    img = cv2.Canny(img, 50, 200)
+    # Gaussian Blur
+    img = cv2.GaussianBlur(img, (3, 3), 0)
     if debug:
         show_img(img)
+
+    # Adaptive Threshold
+    img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    show_img(img)
 
     #Find contours
     ret, thresh = cv2.threshold(img, 127, 255, 0)
