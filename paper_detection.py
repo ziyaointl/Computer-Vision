@@ -2,12 +2,9 @@ __author__ = 'zhangm2'
 
 import cv2
 import numpy
+from imutil import show_img
 
-debug = False
-
-def show_img(img):
-    cv2.imshow("Main", img)
-    cv2.waitKey()
+debug = True
 
 def get_paper(img):
     #Read in file and resize
