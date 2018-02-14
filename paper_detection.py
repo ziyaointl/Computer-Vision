@@ -105,3 +105,42 @@ def index_of_largest_contour(contours):
             largest_contour_index = i
     return largest_contour_index
 
+def get_answer_region_contour(contours, hier, i, img):
+    """Recursively find the contour enclosing the answer region
+    Returns a contour that occupies at least 20% of the area of its direct parent contour,
+    repeat until no such contours can be found
+
+    Keyword arguments:
+    contours -- the list of all contours
+    hier -- contour tree hierarchy returned by cv2.findCountours
+    i -- the index of the current contour candidate
+    """
+
+    def is_valid_contour(index):
+        """Helper function that verifies whether a contour meets the condition of
+        occuping at least 20% of the area of its direct parent contour
+        """
+        area = cv2.contourArea(contours[index])
+        if area / parent_area > 0.2:
+            return True
+
+    if debug:
+        cv2.drawContours(img, [contours[i]], -1, (0, 255, 0), 3)
+        show_img(img)
+
+    # If this contour does not have a child, simply return it
+    if hier[i][2] < 0:
+        return contours[i]
+    # Loop through the children of this contour,
+    # find the first contour that occupies at least 20% of the area of contours[i]
+    parent_area = cv2.contourArea(contours[i])
+    child_index = hier[i][2]
+    # If the current contour is valid, set it as the the parent contour and recursively call find()
+    if is_valid_contour(child_index):
+        return get_answer_region_contour(contours, hier, child_index, img)
+    while hier[child_index][0] > -1:
+        child_index = hier[child_index][0]
+        if is_valid_contour(child_index):
+            return get_answer_region_contour(contours, hier, child_index, img)
+    # If no suitable contours are found, return the current one
+    return contours[i]
