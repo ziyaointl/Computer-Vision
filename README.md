@@ -13,7 +13,7 @@ OCR using ORB and brute force feature match
 ### imutil.py
 Helper Functions
 
-show-img(img): Show image in a window
+show_img(img): Show image in a window
 
 to_gray_scale(img): Return a grayscale image
 
