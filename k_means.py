@@ -47,3 +47,21 @@ def get_centroid(pts):
     y = mean([pt[1] for pt in pts])
     return x, y
 
+
+def k_means(pts, centroids, distance_fn, img, max_updates=100):
+    old_centroids, clusters = [], []
+    for i in range(max_updates):
+        if centroids == old_centroids:
+            break
+        old_centroids = centroids
+        clusters = get_clusters(pts, centroids, distance_fn)
+        centroids = [get_centroid(cluster) for cluster in clusters.values()]
+        if debug:
+            print i
+            canvas = img.copy()
+            for key in clusters.keys():
+                for pt in clusters[key]:
+                    cv2.line(canvas, pt, key, (0, 255, 0), 2)
+                cv2.circle(canvas, key, 1, (0, 0, 255), 2)
+            show_img(canvas)
+    return clusters.values()
