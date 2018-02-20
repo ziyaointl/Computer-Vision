@@ -29,3 +29,14 @@ def get_clusters(pts, centroids, distance_fn):
             pairings[closest_cent] = [pt]
     return pairings
 
+
+def mean(lst):
+    """Return the arithmetic mean of a list of numbers
+    >>> mean([1, 2, 3])
+    2
+    """
+    assert len(lst) > 0, 'List is empty'
+    ans = 0
+    for num in lst:
+        ans += num
+    return ans / len(lst)
