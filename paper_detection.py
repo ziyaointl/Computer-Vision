@@ -4,7 +4,7 @@ import cv2
 import numpy
 from imutil import show_img
 
-debug = True
+debug = False
 
 def get_paper(img):
     #Read in file and resize
@@ -27,7 +27,8 @@ def get_paper(img):
 
     # Adaptive Threshold
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-    show_img(img)
+    if debug:
+        show_img(img)
 
     # Find contours
     ret, thresh = cv2.threshold(img, 127, 255, 0)
@@ -44,7 +45,6 @@ def get_paper(img):
     if cv2.contourArea(largest_contour) / image_size < 0.2:
         print('No contour of the right size found')
         return
-    print('Contour found!')
 
     if debug:
         cv2.drawContours(resizedImg, [contrs[index_of_largest_contour]], -1, (255, 0, 0), 3)
@@ -94,9 +94,8 @@ def get_paper(img):
         elif (x <= imgCenter[0][0] and y <= imgCenter[0][1]):
             upLeft = point
 
-    height, width, depth = oriImg.shape
-    height = int(ratioLarge * height)
-    width = int(ratioLarge * width)
+    height = 750 * 2
+    width = 770 * 2
 
     #Perspective Transform
     origPts = numpy.float32([upLeft[0] / ratioSmall, lowLeft[0] / ratioSmall, upRight[0] / ratioSmall, lowRight[0] / ratioSmall])
