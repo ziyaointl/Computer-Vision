@@ -67,8 +67,9 @@ if debug:
 # Find Contours
 imgCont, contrs, hier = cv2.findContours(img,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 # Filter Contours
-
-
+contrs = [c for c in contrs if cv2.contourArea(c) > 400 and cv2.contourArea(c) < 600]
+print(len(contrs))
+rect = contour_center(contrs[0])
 # Draw Contours
 if debug:
     cv2.drawContours(resizedImg, contrs, -1, (255, 0, 0), 3)
