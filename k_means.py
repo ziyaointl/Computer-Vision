@@ -13,7 +13,7 @@ def contour_center(cnt):
 
 def find_closest(pt, centroids, distance_fn):
     """Return the centroid closest to pt using the distance measured by distance_fn(pt)
-    >>> find_closest((0, 0), [(0, 1), (0, 2)], horizontal_distance)
+    >>> find_closest((0, 0), [(0, 1), (0, 2)], lambda a, b: abs(a[0] - b[0]))
     (0, 1)
     """
     return min(centroids, key=lambda x: distance_fn(x, pt))
@@ -64,4 +64,7 @@ def k_means(pts, centroids, distance_fn, img, max_updates=100):
                     cv2.line(canvas, pt, key, (0, 255, 0), 2)
                 cv2.circle(canvas, key, 1, (0, 0, 255), 2)
             show_img(canvas)
-    return clusters.values()
+    return clusters
+
+import doctest
+doctest.testmod()
