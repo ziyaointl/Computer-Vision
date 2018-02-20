@@ -18,3 +18,14 @@ def find_closest(pt, centroids, distance_fn):
     """
     return min(centroids, key=lambda x: distance_fn(x, pt))
 
+
+def get_clusters(pts, centroids, distance_fn):
+    pairings = {}
+    for pt in pts:
+        closest_cent = find_closest(pt, centroids, distance_fn)
+        if closest_cent in pairings.keys():
+            pairings[closest_cent].append(pt)
+        else:
+            pairings[closest_cent] = [pt]
+    return pairings
+
