@@ -40,3 +40,10 @@ def mean(lst):
     for num in lst:
         ans += num
     return ans / len(lst)
+
+
+def get_centroid(pts):
+    x = mean([pt[0] for pt in pts])
+    y = mean([pt[1] for pt in pts])
+    return x, y
+
