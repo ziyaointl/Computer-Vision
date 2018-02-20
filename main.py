@@ -31,36 +31,39 @@ def sort_dict(dict, key_fn=lambda x:x):
     return [dict[key] for key in sorted(dict.keys(), key=key_fn)]
 
 
+def pre_process(img):
+    """Preprocess img for contour recognition"""
+    # Convert to grayscale
+    img = to_gray_scale(img)
+    if debug:
+        show_img(img)
+
+    # Gaussian Blur
+    img = cv2.GaussianBlur(img, (9, 9), 0)
+    if debug:
+        show_img(img)
+
+    # Adaptive Threshold
+    img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 5)
+    if debug:
+        show_img(img)
+
+    # Morphological Filter: Close
+    # Eliminate small black dots
+    st = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, st, 1)
+    if debug:
+        show_img(img)
+
+    return img
+
+
+
 filename = "assets/IMG_0232.JPG"
+
 img = cv2.imread(filename)
-if debug:
-    show_img(img)
-
 img = get_paper(img)
-if debug:
-    show_img(img)
-
-# Resize paper and convert to grayscale
-img = cv2.resize(img, (0, 0), fx = .5, fy = .5)
-resizedImg = img
-img = to_gray_scale(img)
-if debug:
-    show_img(img)
-
-#Gaussian Blur
-img = cv2.GaussianBlur(img, (9, 9), 0)
-if debug:
-    show_img(img)
-
-# Adaptive Threshold
-img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
-if debug:
-    show_img(img)
-
-# Morphological Filter: Close
-# Eliminate small black dots
-st = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, st, 1)
+img = cv2.resize(img, (0, 0), fx=.5, fy=.5)
 if debug:
     show_img(img)
 
