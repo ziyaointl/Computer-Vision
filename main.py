@@ -8,6 +8,15 @@ import cv2
 debug = True
 
 
+def horizontal_distance(pt1, pt2):
+    """Return the horizontal distance between two points (x1, y1) and (x2, y2)
+    >>> horizontal_distance((1, 2),(8, 4))
+    7
+    """
+    return abs(pt2[0] - pt1[0])
+
+
+
 def vertical_distance(pt1, pt2):
     """Return the vertical distance between two points (x1, y1) and (x2, y2)
     >>> vertical_distance((1, 2),(8, 11))
