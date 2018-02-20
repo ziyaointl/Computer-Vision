@@ -1,8 +1,8 @@
 __author__ = 'zhangm2'
 
 import cv2
-import numpy
 import sys
+from math import pi
 
 debug = False
 
@@ -89,3 +89,11 @@ def get_char_simple(img):
     boundingBox = mergeBoundingBoxes(validBoxes)
 
     return getBoundedImg(img, boundingBox)
+
+def circularity(contour):
+    perimeter = cv2.arcLength(contour, True)
+    if perimeter == 0:
+        return 0
+    area = cv2.contourArea(contour)
+    print area
+    return (4 * pi * area) / perimeter**2
