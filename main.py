@@ -57,6 +57,18 @@ def pre_process(img):
 
     return img
 
+def get_bubble_contours(img, original_img=None):
+    if original_img is None:
+        original_img = img
+    # Find Contours
+    imgCont, contrs, hier = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    # Filter Contours
+    contrs = [c for c in contrs if cv2.contourArea(c) > 400 and cv2.contourArea(c) < 600]
+    # TODO: Error detection by counting the number of valid contours
+    if debug:
+        cv2.drawContours(original_img, contrs, -1, (255, 0, 0), 3)
+        show_img(original_img)
+    return contrs
 
 
 filename = "assets/IMG_0232.JPG"
@@ -66,17 +78,6 @@ img = get_paper(img)
 img = cv2.resize(img, (0, 0), fx=.5, fy=.5)
 if debug:
     show_img(img)
-
-# Find Contours
-imgCont, contrs, hier = cv2.findContours(img,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-# Filter Contours
-contrs = [c for c in contrs if cv2.contourArea(c) > 400 and cv2.contourArea(c) < 600]
-print(len(contrs))
-rect = contour_center(contrs[0])
-# Draw Contours
-if debug:
-    cv2.drawContours(resizedImg, contrs, -1, (255, 0, 0), 3)
-    show_img(resizedImg)
 
 # k_means clustering
 # Calculate contour centers
