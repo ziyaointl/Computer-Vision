@@ -1,9 +1,9 @@
 from paper_detection import get_paper
 from imutil import show_img
 from imutil import to_gray_scale
-import numpy as np
-from imutil import otsu
+from k_means import k_means, contour_center
 import cv2
+import numpy as np
 
 debug = True
 
