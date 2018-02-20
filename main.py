@@ -70,6 +70,28 @@ def get_bubble_contours(img, original_img=None):
         show_img(original_img)
     return contrs
 
+def get_answer_grid(contrs, img):
+    # k_means clustering
+    # Calculate contour centers
+    cnt_centers = [contour_center(cnt) for cnt in contrs]
+    # Cluster contour centers by rows
+    rows = k_means(cnt_centers, [(0, 50 + row * 56) for row in range(13)], vertical_distance, img)
+    # Sort those rows
+    rows = sort_dict(rows, lambda x: x[1])
+    # Cluster contour centers by columns
+    rows = [k_means(row, [(112 + 195 * col, 0) for col in range(4)], horizontal_distance, img) for row in
+            rows]
+    # Sort those columns
+    rows = [sort_dict(row, lambda x: x[0]) for row in rows]
+    # Sort individual bubbles in each question
+    rows = [[sorted(col, key=lambda x: x[0]) for col in row] for row in rows]
+    return rows
+
+def get_question_location(question, grid):
+    """Maps the question number to its location on the grid.
+    Returns an array containing sorted points,
+    each point representing the location of a detected bubble of the requested question"""
+    return grid[(question - 1) % 13][(question - 1) // 13]
 
 filename = "assets/IMG_0232.JPG"
 
@@ -79,27 +101,14 @@ img = cv2.resize(img, (0, 0), fx=.5, fy=.5)
 if debug:
     show_img(img)
 
-# k_means clustering
-# Calculate contour centers
-cnt_centers = [contour_center(cnt) for cnt in contrs]
-# Cluster contour centers by rows
-rows = k_means(cnt_centers, [(0, 50 + row * 56) for row in range(13)], vertical_distance, img=resizedImg)
-# Sort those rows
-rows = sort_dict(rows, lambda x: x[1])
-# Cluster contour centers by columns
-rows = [k_means(row, [(112 + 195 * col, 0) for col in range(4)], horizontal_distance, img=resizedImg) for row in rows]
-# Sort those columns
-rows = [sort_dict(row, lambda x: x[0]) for row in rows]
-# Sort individual bubbles in each question
-rows = [[sorted(col, key=lambda x: x[0]) for col in row] for row in rows]
+img_with_color = img.copy()
+img = pre_process(img)
 
-def get_question_location(question, grid):
-    """Returns an array containing sorted points,
-    each point representing the location of a detected bubble of the requested question"""
-    return grid[(question - 1) % 13][(question - 1) // 13]
+contrs = get_bubble_contours(img, img_with_color)
+grid = get_answer_grid(contrs, img_with_color)
 
 for question in range(1, 53):
-    locations = get_question_location(question, rows)
+    locations = get_question_location(question, grid)
     for bubble in locations:
         mask = np.zeros(img.shape, np.uint8)
         cv2.circle(mask, bubble, 8, 255, -1)
