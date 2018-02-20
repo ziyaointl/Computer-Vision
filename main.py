@@ -16,7 +16,6 @@ def horizontal_distance(pt1, pt2):
     return abs(pt2[0] - pt1[0])
 
 
-
 def vertical_distance(pt1, pt2):
     """Return the vertical distance between two points (x1, y1) and (x2, y2)
     >>> vertical_distance((1, 2),(8, 11))
@@ -24,7 +23,15 @@ def vertical_distance(pt1, pt2):
     """
     return abs(pt2[1] - pt1[1])
 
-filename = "assets/IMG_8083.JPG"
+
+def sort_dict(dict, key_fn=lambda x:x):
+    """Return a list of values sorted according to the keys of the dictionary
+    Optionally, pass in a key function. If passed, the result of key_fn(key) is used for sorting
+    """
+    return [dict[key] for key in sorted(dict.keys(), key=key_fn)]
+
+
+filename = "assets/IMG_0232.JPG"
 img = cv2.imread(filename)
 if debug:
     show_img(img)
