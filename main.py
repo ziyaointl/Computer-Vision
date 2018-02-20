@@ -94,6 +94,13 @@ def get_question_location(question, grid):
     each point representing the location of a detected bubble of the requested question"""
     return grid[(question - 1) % 13][(question - 1) // 13]
 
+for question in range(1, 53):
+    locations = get_question_location(question, rows)
+    for bubble in locations:
+        mask = np.zeros(img.shape, np.uint8)
+        cv2.circle(mask, bubble, 8, 255, -1)
+        print cv2.mean(img, mask)
+    print("--------------------" + str(question))
 
 import doctest
 doctest.testmod()
