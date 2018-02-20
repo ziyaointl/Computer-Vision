@@ -89,3 +89,8 @@ rows = [sort_dict(row, lambda x: x[0]) for row in rows]
 # Sort individual bubbles in each question
 rows = [[sorted(col, key=lambda x: x[0]) for col in row] for row in rows]
 
+def get_question_location(question, grid):
+    """Returns an array containing sorted points,
+    each point representing the location of a detected bubble of the requested question"""
+    return grid[(question - 1) % 13][(question - 1) // 13]
+
