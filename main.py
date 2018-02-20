@@ -94,3 +94,6 @@ def get_question_location(question, grid):
     each point representing the location of a detected bubble of the requested question"""
     return grid[(question - 1) % 13][(question - 1) // 13]
 
+
+import doctest
+doctest.testmod()
