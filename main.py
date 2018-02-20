@@ -58,19 +58,32 @@ def pre_process(img):
     return img
 
 def get_bubble_contours(img, original_img=None):
+    """
+    :param img: a preprocessed image of the answer region
+    :param original_img: the original colored image, used for visualization if debug is turned on
+    :return: a list of contours of answer bubbles
+    """
     if original_img is None:
         original_img = img
-    # Find Contours
+
+    # Find contours
     imgCont, contrs, hier = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    # Filter Contours
+    # Filter contours by area
     contrs = [c for c in contrs if cv2.contourArea(c) > 400 and cv2.contourArea(c) < 600]
     # TODO: Error detection by counting the number of valid contours
+
     if debug:
         cv2.drawContours(original_img, contrs, -1, (255, 0, 0), 3)
         show_img(original_img)
     return contrs
 
 def get_answer_grid(contrs, img):
+    """Group individual bubble locations into questions they belong.
+    This 'grid' can be passed to get_question_location(question, grid) to get the bubble locations of a question
+    :param contrs: contours of answer bubbles
+    :param img: the original colored image, used for visualization if debug is turned on in k_means()
+    :return: a 2-dimensional list containing bubble locations, sorted by the order they appear on the image
+    """
     # k_means clustering
     # Calculate contour centers
     cnt_centers = [contour_center(cnt) for cnt in contrs]
@@ -88,9 +101,11 @@ def get_answer_grid(contrs, img):
     return rows
 
 def get_question_location(question, grid):
-    """Maps the question number to its location on the grid.
-    Returns an array containing sorted points,
-    each point representing the location of a detected bubble of the requested question"""
+    """Map a question to its location on the grid.
+    :param question: question number
+    :param grid: the grid returned by get_answer_grid()
+    :return: an array containing sorted points, each representing the location of a detected bubble of the requested question
+    """
     return grid[(question - 1) % 13][(question - 1) // 13]
 
 filename = "assets/IMG_0232.JPG"

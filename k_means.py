@@ -3,6 +3,7 @@ from imutil import show_img
 
 debug = True
 
+
 def contour_center(cnt):
     """Return the centor of the bounding box of a contour"""
     rect = cv2.boundingRect(cnt)
@@ -50,14 +51,13 @@ def get_centroid(pts):
 
 def k_means(pts, centroids, distance_fn, img, max_updates=100):
     old_centroids, clusters = [], []
-    for i in range(max_updates):
+    for _ in range(max_updates):
         if centroids == old_centroids:
             break
         old_centroids = centroids
         clusters = get_clusters(pts, centroids, distance_fn)
         centroids = [get_centroid(cluster) for cluster in clusters.values()]
         if debug:
-            print i
             canvas = img.copy()
             for key in clusters.keys():
                 for pt in clusters[key]:

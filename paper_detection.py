@@ -7,7 +7,7 @@ from imutil import show_img
 debug = False
 
 def get_paper(img):
-    #Read in file and resize
+    # Read in file and resize
     oriImg = img
     ratioSmall = .2
     ratioLarge = .5
