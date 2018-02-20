@@ -7,6 +7,14 @@ import cv2
 
 debug = True
 
+
+def vertical_distance(pt1, pt2):
+    """Return the vertical distance between two points (x1, y1) and (x2, y2)
+    >>> vertical_distance((1, 2),(8, 11))
+    9
+    """
+    return abs(pt2[1] - pt1[1])
+
 filename = "assets/IMG_8083.JPG"
 img = cv2.imread(filename)
 if debug:
