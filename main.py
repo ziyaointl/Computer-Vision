@@ -74,3 +74,18 @@ rect = contour_center(contrs[0])
 if debug:
     cv2.drawContours(resizedImg, contrs, -1, (255, 0, 0), 3)
     show_img(resizedImg)
+
+# k_means clustering
+# Calculate contour centers
+cnt_centers = [contour_center(cnt) for cnt in contrs]
+# Cluster contour centers by rows
+rows = k_means(cnt_centers, [(0, 50 + row * 56) for row in range(13)], vertical_distance, img=resizedImg)
+# Sort those rows
+rows = sort_dict(rows, lambda x: x[1])
+# Cluster contour centers by columns
+rows = [k_means(row, [(112 + 195 * col, 0) for col in range(4)], horizontal_distance, img=resizedImg) for row in rows]
+# Sort those columns
+rows = [sort_dict(row, lambda x: x[0]) for row in rows]
+# Sort individual bubbles in each question
+rows = [[sorted(col, key=lambda x: x[0]) for col in row] for row in rows]
+
