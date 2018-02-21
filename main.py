@@ -2,6 +2,7 @@ from paper_detection import get_paper
 from imutil import show_img
 from imutil import to_gray_scale
 from k_means import k_means, contour_center
+from string import ascii_uppercase
 import cv2
 import numpy as np
 
@@ -24,11 +25,11 @@ def vertical_distance(pt1, pt2):
     return abs(pt2[1] - pt1[1])
 
 
-def sort_dict(dict, key_fn=lambda x:x):
+def sort_dict(dictionary, key_fn=lambda x: x):
     """Return a list of values sorted according to the keys of the dictionary
     Optionally, pass in a key function. If passed, the result of key_fn(key) is used for sorting
     """
-    return [dict[key] for key in sorted(dict.keys(), key=key_fn)]
+    return [dictionary[key] for key in sorted(dictionary.keys(), key=key_fn)]
 
 
 def pre_process(img):
@@ -57,6 +58,7 @@ def pre_process(img):
 
     return img
 
+
 def get_bubble_contours(img, original_img=None):
     """
     :param img: a preprocessed image of the answer region
@@ -76,6 +78,7 @@ def get_bubble_contours(img, original_img=None):
         cv2.drawContours(original_img, contrs, -1, (255, 0, 0), 3)
         show_img(original_img)
     return contrs
+
 
 def get_answer_grid(contrs, img):
     """Group individual bubble locations into questions they belong.
@@ -100,6 +103,7 @@ def get_answer_grid(contrs, img):
     rows = [[sorted(col, key=lambda x: x[0]) for col in row] for row in rows]
     return rows
 
+
 def get_question_location(question, grid):
     """Map a question to its location on the grid.
     :param question: question number
@@ -117,6 +121,8 @@ def get_ans_from_user(question):
 
 def map_number_to_capital_letter(num):
     return ascii_uppercase[num]
+
+# TODO: Replace 'magic numbers' with either constants or expressions
 
 filename = "assets/IMG_0232.JPG"
 
