@@ -108,6 +108,12 @@ def get_question_location(question, grid):
     """
     return grid[(question - 1) % 13][(question - 1) // 13]
 
+
+def get_ans_from_user(question):
+    # TODO: Input verification
+    ans = raw_input('Please enter the answer for question ' + str(question) + ': ')
+    return ans
+
 filename = "assets/IMG_0232.JPG"
 
 img = cv2.imread(filename)
