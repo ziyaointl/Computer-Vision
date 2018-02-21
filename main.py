@@ -114,6 +114,10 @@ def get_ans_from_user(question):
     ans = raw_input('Please enter the answer for question ' + str(question) + ': ')
     return ans
 
+
+def map_number_to_capital_letter(num):
+    return ascii_uppercase[num]
+
 filename = "assets/IMG_0232.JPG"
 
 img = cv2.imread(filename)
