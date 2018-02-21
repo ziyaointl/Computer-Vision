@@ -137,14 +137,23 @@ img = pre_process(img)
 
 contrs = get_bubble_contours(img, img_with_color)
 grid = get_answer_grid(contrs, img_with_color)
+answers = []
 
 for question in range(1, 53):
     locations = get_question_location(question, grid)
-    for bubble in locations:
+    ans = []
+    if len(locations) != 4:
+        answers.append([get_ans_from_user(question)])
+        continue
+    for i in range(4):
         mask = np.zeros(img.shape, np.uint8)
-        cv2.circle(mask, bubble, 8, 255, -1)
-        print cv2.mean(img, mask)
-    print("--------------------" + str(question))
+        cv2.circle(mask, locations[i], 8, 255, -1)
+        if cv2.mean(img, mask)[0] < 100:
+            ans.append(map_number_to_capital_letter(i))
+    answers.append(ans)
+
+for i, ans in enumerate(answers):
+    print(i, ans)
 
 import doctest
 doctest.testmod()
