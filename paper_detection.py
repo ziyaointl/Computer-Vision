@@ -11,7 +11,7 @@ def get_paper(img):
     oriImg = img
     ratioSmall = .2
     ratioLarge = .5
-    resizedImg = cv2.resize(oriImg, (0, 0), fx = ratioSmall, fy = ratioSmall)
+    resizedImg = cv2.resize(oriImg, (0, 0), fx = ratioLarge, fy = ratioLarge)
     if debug:
         show_img(resizedImg)
 
@@ -21,7 +21,7 @@ def get_paper(img):
         show_img(img)
 
     # Gaussian Blur
-    img = cv2.GaussianBlur(img, (3, 3), 0)
+    img = cv2.GaussianBlur(img, (7, 7), 0)
     if debug:
         show_img(img)
 
@@ -98,7 +98,7 @@ def get_paper(img):
     width = 770 * 2
 
     #Perspective Transform
-    origPts = numpy.float32([upLeft[0] / ratioSmall, lowLeft[0] / ratioSmall, upRight[0] / ratioSmall, lowRight[0] / ratioSmall])
+    origPts = numpy.float32([upLeft[0] / ratioLarge, lowLeft[0] / ratioLarge, upRight[0] / ratioLarge, lowRight[0] / ratioLarge])
     newPts = numpy.float32([[0, 0], [0, height - 1], [width - 1, 0], [width - 1, height - 1]])
     mat = cv2.getPerspectiveTransform(origPts, newPts)
     workImg = cv2.warpPerspective(oriImg, mat, (width, height))
