@@ -142,9 +142,9 @@ def find_answers(filename):
 
     for question in range(1, 53):
         locations = get_question_location(question, grid)
-        ans = []
+        ans = ''
         if len(locations) != 4:
-            answers.append([get_ans_from_user(question)])
+            answers.append(get_ans_from_user(question))
             continue
         for i in range(4):
             # Calculate average brightness of the circle around each bubble location
@@ -152,7 +152,7 @@ def find_answers(filename):
             cv2.circle(mask, locations[i], 8, 255, -1)
             # If average brightness is smaller than 100, regard the bubble as filled
             if cv2.mean(img, mask)[0] < 100:
-                ans.append(map_number_to_capital_letter(i))
+                ans += map_number_to_capital_letter(i)
         answers.append(ans)
     return answers
 
