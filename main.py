@@ -122,38 +122,39 @@ def get_ans_from_user(question):
 def map_number_to_capital_letter(num):
     return ascii_uppercase[num]
 
+
 # TODO: Replace 'magic numbers' with either constants or expressions
 
-filename = "assets/IMG_0232.JPG"
 
-img = cv2.imread(filename)
-img = get_paper(img)
-img = cv2.resize(img, (0, 0), fx=.5, fy=.5)
-if debug:
-    show_img(img)
+def find_answers(filename):
+    img = cv2.imread(filename)
+    img = get_paper(img)
+    img = cv2.resize(img, (0, 0), fx=.5, fy=.5)
+    if debug:
+        show_img(img)
 
-img_with_color = img.copy()
-img = pre_process(img)
+    img_with_color = img.copy()
+    img = pre_process(img)
 
-contrs = get_bubble_contours(img, img_with_color)
-grid = get_answer_grid(contrs, img_with_color)
-answers = []
+    contrs = get_bubble_contours(img, img_with_color)
+    grid = get_answer_grid(contrs, img_with_color)
+    answers = []
 
-for question in range(1, 53):
-    locations = get_question_location(question, grid)
-    ans = []
-    if len(locations) != 4:
-        answers.append([get_ans_from_user(question)])
-        continue
-    for i in range(4):
-        mask = np.zeros(img.shape, np.uint8)
-        cv2.circle(mask, locations[i], 8, 255, -1)
-        if cv2.mean(img, mask)[0] < 100:
-            ans.append(map_number_to_capital_letter(i))
-    answers.append(ans)
-
-for i, ans in enumerate(answers):
-    print(i, ans)
+    for question in range(1, 53):
+        locations = get_question_location(question, grid)
+        ans = []
+        if len(locations) != 4:
+            answers.append([get_ans_from_user(question)])
+            continue
+        for i in range(4):
+            # Calculate average brightness of the circle around each bubble location
+            mask = np.zeros(img.shape, np.uint8)
+            cv2.circle(mask, locations[i], 8, 255, -1)
+            # If average brightness is smaller than 100, regard the bubble as filled
+            if cv2.mean(img, mask)[0] < 100:
+                ans.append(map_number_to_capital_letter(i))
+        answers.append(ans)
+    return answers
 
 import doctest
 doctest.testmod()
