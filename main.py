@@ -45,7 +45,8 @@ def pre_process(img):
         show_img(img)
 
     # Adaptive Threshold
-    img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 5)
+    # TODO: Decrease adaptive threshold region and use the colored image to determine mean brightness
+    img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 47, 5)
     if debug:
         show_img(img)
 
@@ -71,7 +72,7 @@ def get_bubble_contours(img, original_img=None):
     # Find contours
     imgCont, contrs, hier = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     # Filter contours by area
-    contrs = [c for c in contrs if cv2.contourArea(c) > 400 and cv2.contourArea(c) < 600]
+    contrs = [c for c in contrs if cv2.contourArea(c) > 400 * 2.25 and cv2.contourArea(c) < 600 * 2.25]
     # TODO: Error detection by counting the number of valid contours
 
     if debug:
@@ -91,11 +92,11 @@ def get_answer_grid(contrs, img):
     # Calculate contour centers
     cnt_centers = [contour_center(cnt) for cnt in contrs]
     # Cluster contour centers by rows
-    rows = k_means(cnt_centers, [(0, 50 + row * 56) for row in range(13)], vertical_distance, img)
+    rows = k_means(cnt_centers, [(0, 75 + row * 84) for row in range(13)], vertical_distance, img)
     # Sort those rows
     rows = sort_dict(rows, lambda x: x[1])
     # Cluster contour centers by columns
-    rows = [k_means(row, [(112 + 195 * col, 0) for col in range(4)], horizontal_distance, img) for row in
+    rows = [k_means(row, [(168 + 292 * col, 0) for col in range(4)], horizontal_distance, img) for row in
             rows]
     # Sort those columns
     rows = [sort_dict(row, lambda x: x[0]) for row in rows]
@@ -149,7 +150,7 @@ def find_answers(filename):
         for i in range(4):
             # Calculate average brightness of the circle around each bubble location
             mask = np.zeros(img.shape, np.uint8)
-            cv2.circle(mask, locations[i], 8, 255, -1)
+            cv2.circle(mask, locations[i], 12, 255, -1)
             # If average brightness is smaller than 100, regard the bubble as filled
             if cv2.mean(img, mask)[0] < 100:
                 ans += map_number_to_capital_letter(i)

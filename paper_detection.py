@@ -4,7 +4,7 @@ import cv2
 import numpy
 from imutil import show_img
 
-debug = False
+debug = True
 
 def get_paper(img):
     # Read in file and resize
@@ -94,8 +94,8 @@ def get_paper(img):
         elif (x <= imgCenter[0][0] and y <= imgCenter[0][1]):
             upLeft = point
 
-    height = 750 * 2
-    width = 770 * 2
+    height = 750 * 3
+    width = 770 * 3
 
     #Perspective Transform
     origPts = numpy.float32([upLeft[0] / ratioLarge, lowLeft[0] / ratioLarge, upRight[0] / ratioLarge, lowRight[0] / ratioLarge])

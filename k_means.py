@@ -1,7 +1,7 @@
 import cv2
 from imutil import show_img
 
-debug = False
+debug = True
 
 
 def contour_center(cnt):
