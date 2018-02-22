@@ -96,7 +96,7 @@ def get_bubble_contours(img, original_img=None):
     # Find contours
     imgCont, contrs, hier = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     # Filter contours by area
-    contrs = [c for c in contrs if cv2.contourArea(c) > 400 * 2.25 and cv2.contourArea(c) < 600 * 2.25]
+    contrs = [c for c in contrs if cv2.contourArea(c) > 400 * 2 and cv2.contourArea(c) < 600 * 2.25]
     # TODO: Error detection by counting the number of valid contours
 
     if debug:
