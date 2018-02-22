@@ -69,7 +69,6 @@ def pre_process(img):
         show_img(img)
 
     # Adaptive Threshold
-    # TODO: Decrease adaptive threshold region and use the colored image to determine mean brightness
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 47, 5)
     if debug:
         show_img(img)
@@ -160,6 +159,7 @@ def find_answers(filename):
         show_img(img)
 
     img_with_color = img.copy()
+    img_gray = to_gray_scale(img_with_color)
     img = pre_process(img)
 
     contrs = get_bubble_contours(img, img_with_color)
@@ -172,13 +172,18 @@ def find_answers(filename):
         if len(locations) != 4:
             answers.append(get_ans_from_user(question))
             continue
+        means = []
         for i in range(4):
             # Calculate average brightness of the circle around each bubble location
             mask = np.zeros(img.shape, np.uint8)
             cv2.circle(mask, locations[i], 12, 255, -1)
             # If average brightness is smaller than 100, regard the bubble as filled
-            if cv2.mean(img, mask)[0] < 100:
-                ans += map_number_to_capital_letter(i)
+            means.append(cv2.mean(img_gray, mask)[0])
+        standard_dev = []
+        for i in range(4):
+            standard_dev.append(standard_deviation(means[:i] + means[i + 1:]))
+        for outlier_index in outliers(standard_dev, 1.45):
+            ans += ascii_uppercase[outlier_index]
         answers.append(ans)
     return answers
 
