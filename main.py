@@ -16,6 +16,14 @@ def standard_deviation(lst):
         ans += (num - m)**2
     return ans
 
+def median_absolute_deviation(lst):
+    """
+    >>> median_absolute_deviation([1, 1, 2, 2, 4, 6, 9])
+    (2.0, 1.0)
+    """
+    median = np.median(lst)
+    return median, np.median([abs(num - median) for num in lst])
+
 
 def horizontal_distance(pt1, pt2):
     """Return the horizontal distance between two points (x1, y1) and (x2, y2)
