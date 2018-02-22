@@ -139,6 +139,7 @@ def get_question_location(question, grid):
 
 
 def get_ans_from_user(question):
+    return 'I'
     # TODO: Input verification
     ans = raw_input('Please enter the answer for question ' + str(question) + ': ')
     return ans
