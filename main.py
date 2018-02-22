@@ -24,6 +24,14 @@ def median_absolute_deviation(lst):
     median = np.median(lst)
     return median, np.median([abs(num - median) for num in lst])
 
+def outliers(lst, thresh=3.5):
+    median, mad = median_absolute_deviation(lst)
+    outlier_indices = []
+    for i in range(len(lst)):
+        modified_z_score = (0.6745 * (lst[i] - median)) / mad
+        if abs(modified_z_score) >= thresh:
+            outlier_indices.append(i)
+    return outlier_indices
 
 def horizontal_distance(pt1, pt2):
     """Return the horizontal distance between two points (x1, y1) and (x2, y2)
