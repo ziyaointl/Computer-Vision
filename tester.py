@@ -6,7 +6,7 @@ def compute_accuracy(original_ans, detected_ans):
         if original_ans[i] == detected_ans[i]:
             correct += 1
         else:
-            print(i, original_ans[i], detected_ans[i])
+            print(i + 1, original_ans[i], detected_ans[i])
     return correct / len(original_ans)
 
 # filenames = ["assets/IMG_" + num + ".JPG" for num in ['0232','5361', '4783','4203', '5485', '5785', '8083', '9001']]
