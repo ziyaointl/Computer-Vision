@@ -1,12 +1,20 @@
 from paper_detection import get_paper
 from imutil import show_img
 from imutil import to_gray_scale
-from k_means import k_means, contour_center
+from k_means import k_means, contour_center, mean
 from string import ascii_uppercase
 import cv2
 import numpy as np
 
+
 debug = True
+
+def standard_deviation(lst):
+    m = mean(lst)
+    ans = 0
+    for num in lst:
+        ans += (num - m)**2
+    return ans
 
 
 def horizontal_distance(pt1, pt2):
