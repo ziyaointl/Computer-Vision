@@ -156,6 +156,7 @@ def find_answers(filename):
     grid = get_answer_grid(contrs, img_with_color)
     answers = []
 
+    # Loop through the question numbers and append each detected answer to a list
     for question in range(1, 53):
         locations = get_question_location(question, grid)
         ans = ''
@@ -164,7 +165,7 @@ def find_answers(filename):
             continue
         means = []
         for i in range(4):
-            # Calculate average brightness of the circle around each bubble location
+            # Calculate average brightness of the circle around each bubble center
             mask = np.zeros(img.shape, np.uint8)
             cv2.circle(mask, locations[i], 12, 255, -1)
             # If average brightness is smaller than 100, regard the bubble as filled
@@ -172,7 +173,7 @@ def find_answers(filename):
         for outlier_index in outliers(means, 3.5):
             # Guard against the situation when three out of four bubbles are filled
             if means[outlier_index] < mean(means[:i] + means[i + 1:]):
-                ans += ascii_uppercase[outlier_index]
+                ans += map_number_to_capital_letter(outlier_index)
         answers.append(ans)
     return answers
 
