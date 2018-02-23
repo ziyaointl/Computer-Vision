@@ -6,8 +6,8 @@ from string import ascii_uppercase
 import cv2
 import numpy as np
 
+debug = False
 
-debug = True
 
 def median_absolute_deviation(lst):
     """
@@ -22,6 +22,8 @@ def outliers(lst, thresh=3.5):
     outlier_indices = []
     for i in range(len(lst)):
         modified_z_score = (0.6745 * (lst[i] - median)) / mad
+        if debug:
+            print modified_z_score
         if abs(modified_z_score) >= thresh:
             outlier_indices.append(i)
     return outlier_indices
@@ -160,6 +162,8 @@ def find_answers(filename):
     answers = []
 
     for question in range(1, 53):
+        if debug:
+            print("-----------" + str(question))
         locations = get_question_location(question, grid)
         ans = ''
         if len(locations) != 4:
@@ -176,6 +180,8 @@ def find_answers(filename):
             # Guard against the situation when three out of four bubbles are filled
             if means[outlier_index] < mean(means[:i] + means[i + 1:]):
                 ans += ascii_uppercase[outlier_index]
+        if debug:
+            print(means)
         answers.append(ans)
     return answers
 
