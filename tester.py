@@ -15,12 +15,18 @@ filenames = ["assets/IMG_" + num + ".JPG" for num in ['6388', '2826','1243', '30
 fails = ['9891', '8880']
 multiple_bubbles = ["1299"]
 
-original_ans = ['A', 'C', 'B', 'D', 'B', 'A', 'D', 'B', 'C', 'C', 'A', 'A', 'A',
+ORIGINAL_ANS = ['A', 'C', 'B', 'D', 'B', 'A', 'D', 'B', 'C', 'C', 'A', 'A', 'A',
                 'A', 'D', 'C', 'A', 'D', 'D', 'B', 'B', 'A', 'C', 'C', 'C', 'B',
                 'B', 'D', 'A', 'B', 'A', 'C', 'D', 'B', 'D', 'D', 'C', 'B', 'A',
                 'B', 'B', 'D', 'A', 'D', 'B', 'C', 'A', 'A', 'D', 'D', 'A', 'A']
 
+cumulative_accuracy = 0
+
 for file in filenames:
     print(file)
     detected_ans = find_answers(file)
-    print("Accuracy: " + str(compute_accuracy(original_ans, detected_ans)))
+    accuracy = compute_accuracy(ORIGINAL_ANS, detected_ans)
+    cumulative_accuracy += accuracy
+    print("Accuracy: " + str(accuracy))
+
+print("Cumulative Accuracy: " + str(cumulative_accuracy / len(filenames)))
