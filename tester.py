@@ -1,4 +1,5 @@
 from main import find_answers
+from custom_exceptions import PaperDetectionError, BubbleDetectionError
 
 def compute_accuracy(original_ans, detected_ans):
     correct = 0.0
@@ -24,9 +25,14 @@ cumulative_accuracy = 0
 
 for file in filenames:
     print(file)
-    detected_ans = find_answers(file)
-    accuracy = compute_accuracy(ORIGINAL_ANS, detected_ans)
-    cumulative_accuracy += accuracy
-    print("Accuracy: " + str(accuracy))
+    try:
+        detected_ans = find_answers(file)
+    except (PaperDetectionError, BubbleDetectionError) as e:
+        print(e)
+        continue
+    else:
+        accuracy = compute_accuracy(ORIGINAL_ANS, detected_ans)
+        cumulative_accuracy += accuracy
+        print("Accuracy: " + str(accuracy))
 
 print("Cumulative Accuracy: " + str(cumulative_accuracy / len(filenames)))
