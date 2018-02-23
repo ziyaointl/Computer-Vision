@@ -3,6 +3,7 @@ __author__ = 'zhangm2'
 import cv2
 import numpy
 from imutil import show_img
+from custom_exceptions import PaperDetectionError
 
 debug = True
 
@@ -37,23 +38,22 @@ def get_paper(img):
     index_of_largest_contour = get_index_of_largest_contour(contrs)
     largest_contour = contrs[index_of_largest_contour]
     image_size = img.shape[0] * img.shape[1]
-    # TODO: convert this into a throw expression
-    # Assuming the paper takes up the majority of the screen.
-    # If the max-sized contour is too small compared to the image (<20%),
-    # we probably didn't find the paper.
-    if cv2.contourArea(largest_contour) / image_size < 0.2:
-        print('No contour of the right size found')
-        return
 
     if debug:
         cv2.drawContours(resizedImg, [largest_contour], -1, (255, 0, 0), 3)
         show_img(resizedImg)
 
     # Approximate the answer region contour to a polygon
-    finalContr = get_answer_region_contour(contrs, hier[0], index_of_largest_contour, resizedImg)
-    epsilon = 0.1 * cv2.arcLength(finalContr, True)
-    finalContr = cv2.approxPolyDP(finalContr, epsilon, True)
-    # TODO: if this contour does not have exactly four points, throw an exception
+    final_contr = get_answer_region_contour(contrs, hier[0], index_of_largest_contour, resizedImg)
+    epsilon = 0.1 * cv2.arcLength(final_contr, True)
+    final_contr = cv2.approxPolyDP(final_contr, epsilon, True)
+    # Assuming the answer region takes up the majority of the screen.
+    # If the max-sized contour is too small compared to the image (<20%),
+    # we probably didn't find the paper.
+    if cv2.contourArea(final_contr) / image_size < 0.05:
+        raise PaperDetectionError('No answer region of the right size found')
+    if len(final_contr) != 4:
+        raise PaperDetectionError('Detected answer region cannot be approximated to a quadrilateral')
 
     # Draw Contours & corners
     if debug:
@@ -124,7 +124,6 @@ def get_answer_region_contour(contours, hier, i, img):
     hier -- contour tree hierarchy returned by cv2.findCountours
     i -- the index of the current contour candidate
     """
-
     def is_valid_contour(index):
         """Helper function that verifies whether a contour meets the condition of
         occuping at least 20% of the area of its direct parent contour
