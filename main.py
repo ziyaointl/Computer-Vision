@@ -3,10 +3,11 @@ from imutil import show_img
 from imutil import to_gray_scale
 from k_means import k_means, contour_center, mean
 from string import ascii_uppercase
+from custom_exceptions import BubbleDetectionError
 import cv2
 import numpy as np
 
-debug = False
+debug = True
 
 
 def median_absolute_deviation(lst):
@@ -22,8 +23,6 @@ def outliers(lst, thresh=3.5):
     outlier_indices = []
     for i in range(len(lst)):
         modified_z_score = (0.6745 * (lst[i] - median)) / mad
-        if debug:
-            print modified_z_score
         if abs(modified_z_score) >= thresh:
             outlier_indices.append(i)
     return outlier_indices
@@ -90,9 +89,10 @@ def get_bubble_contours(img, original_img=None):
     # Find contours
     imgCont, contrs, hier = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     # Filter contours by area
+    # TODO: Also filter contours by circularity or convexity?
     contrs = [c for c in contrs if cv2.contourArea(c) > 400 * 2 and cv2.contourArea(c) < 600 * 2.25]
-    # TODO: Error detection by counting the number of valid contours
-
+    if len(contrs) < int(52 * 4 * 0.9):
+        raise BubbleDetectionError('Insufficient number of detected bubbles')
     if debug:
         cv2.drawContours(original_img, contrs, -1, (255, 0, 0), 3)
         show_img(original_img)
@@ -111,6 +111,8 @@ def get_answer_grid(contrs, img):
     cnt_centers = [contour_center(cnt) for cnt in contrs]
     # Cluster contour centers by rows
     rows = k_means(cnt_centers, [(0, 75 + row * 84) for row in range(13)], vertical_distance, img)
+    if len(rows) != 13:
+        raise BubbleDetectionError('Not enough rows are found')
     # Sort those rows
     rows = sort_dict(rows, lambda x: x[1])
     # Cluster contour centers by columns
@@ -149,7 +151,6 @@ def map_number_to_capital_letter(num):
 def find_answers(filename):
     img = cv2.imread(filename)
     img = get_paper(img)
-    img = cv2.resize(img, (0, 0), fx=.5, fy=.5)
     if debug:
         show_img(img)
 
@@ -162,8 +163,6 @@ def find_answers(filename):
     answers = []
 
     for question in range(1, 53):
-        if debug:
-            print("-----------" + str(question))
         locations = get_question_location(question, grid)
         ans = ''
         if len(locations) != 4:
@@ -180,8 +179,6 @@ def find_answers(filename):
             # Guard against the situation when three out of four bubbles are filled
             if means[outlier_index] < mean(means[:i] + means[i + 1:]):
                 ans += ascii_uppercase[outlier_index]
-        if debug:
-            print(means)
         answers.append(ans)
     return answers
 
