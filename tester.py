@@ -9,10 +9,11 @@ def compute_accuracy(original_ans, detected_ans):
             print(i + 1, original_ans[i], detected_ans[i])
     return correct / len(original_ans)
 
-# filenames = ["assets/IMG_" + num + ".JPG" for num in ['0232','5361', '4783','4203', '5485', '5785', '8083', '9001']]
+filenames = ["assets/IMG_" + num + ".JPG" for num in ['6388', '2826','1243', '3064', '6591', '8836', '8760', '6024', '6112', '1738',
+                                                        '3031', '5241', '7230', '7394', '3497', '6415']]
 
-filenames = ["assets/IMG_" + num + ".JPG" for num in ['2588', '0739', '1071', '1522', '1982', '2434',
-                                                      '2588', '2826', '3061', '3819', '4542', '6236', '6261', '6388']]
+fails = ['9891', '8880']
+multiple_bubbles = ["1299"]
 
 original_ans = ['A', 'C', 'B', 'D', 'B', 'A', 'D', 'B', 'C', 'C', 'A', 'A', 'A',
                 'A', 'D', 'C', 'A', 'D', 'D', 'B', 'B', 'A', 'C', 'C', 'C', 'B',
@@ -22,4 +23,4 @@ original_ans = ['A', 'C', 'B', 'D', 'B', 'A', 'D', 'B', 'C', 'C', 'A', 'A', 'A',
 for file in filenames:
     print(file)
     detected_ans = find_answers(file)
-    print compute_accuracy(original_ans, detected_ans)
+    print("Accuracy: " + str(compute_accuracy(original_ans, detected_ans)))
