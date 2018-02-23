@@ -52,11 +52,6 @@ def sort_dict(dictionary, key_fn=lambda x: x):
 
 def pre_process(img):
     """Preprocess img for contour recognition"""
-    # Convert to grayscale
-    img = to_gray_scale(img)
-    if debug:
-        show_img(img)
-
     # Gaussian Blur
     img = cv2.GaussianBlur(img, (9, 9), 0)
     if debug:
@@ -155,7 +150,7 @@ def find_answers(filename):
 
     img_with_color = img.copy()
     img_gray = to_gray_scale(img_with_color)
-    img = pre_process(img)
+    img = pre_process(img_gray)
 
     contrs = get_bubble_contours(img, img_with_color)
     grid = get_answer_grid(contrs, img_with_color)
