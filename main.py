@@ -84,7 +84,8 @@ def get_bubble_contours(img, original_img=None):
     # Filter contours by area
     # TODO: Also filter contours by circularity or convexity?
     contrs = [c for c in contrs if cv2.contourArea(c) > 400 * 2 and cv2.contourArea(c) < 600 * 2.25]
-    if len(contrs) < int(52 * 4 * 0.9):
+    number_of_bubbles = len(contrs)
+    if number_of_bubbles < int(52 * 4 * 0.9) or number_of_bubbles > int(52 * 4 * 1.1):
         raise BubbleDetectionError('Insufficient number of detected bubbles')
     if debug:
         cv2.drawContours(original_img, contrs, -1, (255, 0, 0), 3)
@@ -104,13 +105,18 @@ def get_answer_grid(contrs, img):
     cnt_centers = [contour_center(cnt) for cnt in contrs]
     # Cluster contour centers by rows
     rows = k_means(cnt_centers, [(0, 75 + row * 84) for row in range(13)], vertical_distance, img)
+    # Verify number of rows
     if len(rows) != 13:
-        raise BubbleDetectionError('Not enough rows are found')
+        raise BubbleDetectionError('Not enough rows were found')
     # Sort those rows
     rows = sort_dict(rows, lambda x: x[1])
     # Cluster contour centers by columns
     rows = [k_means(row, [(168 + 292 * col, 0) for col in range(4)], horizontal_distance, img) for row in
             rows]
+    # Verify number of columns in each row
+    for row in rows:
+        if len(row) != 4:
+            raise BubbleDetectionError('Not enough columns were found')
     # Sort those columns
     rows = [sort_dict(row, lambda x: x[0]) for row in rows]
     # Sort individual bubbles in each question
