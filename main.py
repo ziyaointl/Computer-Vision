@@ -9,13 +9,6 @@ import numpy as np
 
 debug = True
 
-def standard_deviation(lst):
-    m = mean(lst)
-    ans = 0
-    for num in lst:
-        ans += (num - m)**2
-    return ans
-
 def median_absolute_deviation(lst):
     """
     >>> median_absolute_deviation([1, 1, 2, 2, 4, 6, 9])
@@ -179,11 +172,10 @@ def find_answers(filename):
             cv2.circle(mask, locations[i], 12, 255, -1)
             # If average brightness is smaller than 100, regard the bubble as filled
             means.append(cv2.mean(img_gray, mask)[0])
-        standard_dev = []
-        for i in range(4):
-            standard_dev.append(standard_deviation(means[:i] + means[i + 1:]))
-        for outlier_index in outliers(standard_dev, 1.45):
-            ans += ascii_uppercase[outlier_index]
+        for outlier_index in outliers(means, 3.5):
+            # Guard against the situation when three out of four bubbles are filled
+            if means[outlier_index] < mean(means[:i] + means[i + 1:]):
+                ans += ascii_uppercase[outlier_index]
         answers.append(ans)
     return answers
 
