@@ -9,9 +9,8 @@ debug = True
 def get_paper(img):
     # Read in file and resize
     oriImg = img
-    ratioSmall = .2
-    ratioLarge = .5
-    resizedImg = cv2.resize(oriImg, (0, 0), fx = ratioLarge, fy = ratioLarge)
+    ratio = .5
+    resizedImg = cv2.resize(oriImg, (0, 0), fx = ratio, fy = ratio)
     if debug:
         show_img(resizedImg)
 
@@ -47,7 +46,7 @@ def get_paper(img):
         return
 
     if debug:
-        cv2.drawContours(resizedImg, [contrs[index_of_largest_contour]], -1, (255, 0, 0), 3)
+        cv2.drawContours(resizedImg, [largest_contour], -1, (255, 0, 0), 3)
         show_img(resizedImg)
 
     # Approximate the answer region contour to a polygon
@@ -58,10 +57,10 @@ def get_paper(img):
 
     # Draw Contours & corners
     if debug:
-        contrs = [finalContr]
+        contrs = [final_contr]
         cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
 
-        for point in finalContr:
+        for point in final_contr:
             x = point[0][0]
             y = point[0][1]
             cv2.circle(resizedImg, (x, y), 5, (255, 0, 255))
@@ -69,10 +68,10 @@ def get_paper(img):
         show_img(resizedImg)
 
     #Calculate image dimensions
-    maxX = max(finalContr[0][0][0], finalContr[1][0][0], finalContr[2][0][0], finalContr[3][0][0])
-    maxY = max(finalContr[0][0][1], finalContr[1][0][1], finalContr[2][0][1], finalContr[3][0][1])
-    minX = min((finalContr[0][0][0], finalContr[1][0][0], finalContr[2][0][0], finalContr[3][0][0]))
-    minY = min(finalContr[0][0][1], finalContr[1][0][1], finalContr[2][0][1], finalContr[3][0][1])
+    maxX = max(final_contr[0][0][0], final_contr[1][0][0], final_contr[2][0][0], final_contr[3][0][0])
+    maxY = max(final_contr[0][0][1], final_contr[1][0][1], final_contr[2][0][1], final_contr[3][0][1])
+    minX = min((final_contr[0][0][0], final_contr[1][0][0], final_contr[2][0][0], final_contr[3][0][0]))
+    minY = min(final_contr[0][0][1], final_contr[1][0][1], final_contr[2][0][1], final_contr[3][0][1])
 
     imgCenter = [[(maxX + minX) / 2, (maxY + minY) / 2]]
 
@@ -82,23 +81,23 @@ def get_paper(img):
     upLeft = imgCenter
     upRight = imgCenter
 
-    for point in finalContr:
+    for point in final_contr:
         x = point[0][0]
         y = point[0][1]
-        if (x >= imgCenter[0][0] and y >= imgCenter[0][1]):
+        if x >= imgCenter[0][0] and y >= imgCenter[0][1]:
             lowRight = point
-        elif (x <= imgCenter[0][0] and y >= imgCenter[0][1]):
+        elif x <= imgCenter[0][0] and y >= imgCenter[0][1]:
             lowLeft = point
-        elif (x >= imgCenter[0][0] and y <= imgCenter[0][1]):
+        elif x >= imgCenter[0][0] and y <= imgCenter[0][1]:
             upRight = point
-        elif (x <= imgCenter[0][0] and y <= imgCenter[0][1]):
+        elif x <= imgCenter[0][0] and y <= imgCenter[0][1]:
             upLeft = point
 
-    height = 750 * 3
-    width = 770 * 3
+    height = 1125
+    width = 1155
 
     #Perspective Transform
-    origPts = numpy.float32([upLeft[0] / ratioLarge, lowLeft[0] / ratioLarge, upRight[0] / ratioLarge, lowRight[0] / ratioLarge])
+    origPts = numpy.float32([upLeft[0] / ratio, lowLeft[0] / ratio, upRight[0] / ratio, lowRight[0] / ratio])
     newPts = numpy.float32([[0, 0], [0, height - 1], [width - 1, 0], [width - 1, height - 1]])
     mat = cv2.getPerspectiveTransform(origPts, newPts)
     workImg = cv2.warpPerspective(oriImg, mat, (width, height))
@@ -145,10 +144,12 @@ def get_answer_region_contour(contours, hier, i, img):
     # find the first contour that occupies at least 20% of the area of contours[i]
     parent_area = cv2.contourArea(contours[i])
     child_index = hier[i][2]
-    # If the current contour is valid, set it as the the parent contour and recursively call find()
+    # If this (first) child contour is valid,
+    # set it as the the parent contour and recursively call get_answer_region_contour
     if is_valid_contour(child_index):
         return get_answer_region_contour(contours, hier, child_index, img)
-    while hier[child_index][0] > -1:
+    # Otherwise, loop through other children contours
+    while hier[child_index][0] >= 0:
         child_index = hier[child_index][0]
         if is_valid_contour(child_index):
             return get_answer_region_contour(contours, hier, child_index, img)
