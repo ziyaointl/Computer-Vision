@@ -67,13 +67,6 @@ def pre_process(img):
     if debug:
         show_img(img)
 
-    # Morphological Filter: Close
-    # Eliminate small black dots
-    st = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-    img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, st, 1)
-    if debug:
-        show_img(img)
-
     return img
 
 

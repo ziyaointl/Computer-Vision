@@ -18,7 +18,7 @@ def compute_accuracy(original_ans, detected_ans):
 # Normally functional data set
 normal = ['6388', '2826','1243', '3064', '6591', '8836', '8760', '6024',
           '6112', '1738', '3031', '5241', '7230', '7394', '3497', '6415']
-# Filez(s) that cause an exception to be thrown, meaning that the user has to retake an image
+# File(s) that cause an exception to be thrown, meaning that the user has to retake an image
 fails = ['9891', '8880']
 # File(s) that contain questions with multiple bubbled in answers. The algorithm still functions normally though,
 # identifying the selected answer for those questions as ''
