@@ -5,29 +5,31 @@ import numpy
 from imutil import show_img
 from custom_exceptions import PaperDetectionError
 
-debug = True
+DEBUG = True
+ANS_REGION_HIEGHT = 1125
+ANS_REGION_WIDTH = 1155
 
 def get_paper(img):
     # Read in file and resize
     oriImg = img
     ratio = .5
     resizedImg = cv2.resize(oriImg, (0, 0), fx = ratio, fy = ratio)
-    if debug:
+    if DEBUG:
         show_img(resizedImg)
 
-    #Convert to gray scale
+    # Convert to gray scale
     img = cv2.cvtColor(resizedImg, cv2.COLOR_RGB2GRAY)
-    if debug:
+    if DEBUG:
         show_img(img)
 
     # Gaussian Blur
     img = cv2.GaussianBlur(img, (7, 7), 0)
-    if debug:
+    if DEBUG:
         show_img(img)
 
     # Adaptive Threshold
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-    if debug:
+    if DEBUG:
         show_img(img)
 
     # Find contours
@@ -39,7 +41,7 @@ def get_paper(img):
     largest_contour = contrs[index_of_largest_contour]
     image_size = img.shape[0] * img.shape[1]
 
-    if debug:
+    if DEBUG:
         cv2.drawContours(resizedImg, [largest_contour], -1, (255, 0, 0), 3)
         show_img(resizedImg)
 
@@ -56,7 +58,7 @@ def get_paper(img):
         raise PaperDetectionError('Detected answer region cannot be approximated to a quadrilateral')
 
     # Draw Contours & corners
-    if debug:
+    if DEBUG:
         contrs = [final_contr]
         cv2.drawContours(resizedImg, contrs, -1, (0, 255, 0), 3)
 
@@ -93,8 +95,8 @@ def get_paper(img):
         elif x <= imgCenter[0][0] and y <= imgCenter[0][1]:
             upLeft = point
 
-    height = 1125
-    width = 1155
+    height = ANS_REGION_HIEGHT
+    width = ANS_REGION_WIDTH
 
     #Perspective Transform
     origPts = numpy.float32([upLeft[0] / ratio, lowLeft[0] / ratio, upRight[0] / ratio, lowRight[0] / ratio])
@@ -132,7 +134,7 @@ def get_answer_region_contour(contours, hier, i, img):
         if area / parent_area > 0.2:
             return True
 
-    if debug:
+    if DEBUG:
         cv2.drawContours(img, [contours[i]], -1, (0, 255, 0), 3)
         show_img(img)
 
