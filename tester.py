@@ -22,9 +22,9 @@ normal = ['6388', '2826','1243', '3064', '6591', '8836', '8760', '6024',
 fails = ['9891', '8880']
 # File(s) that contain questions with multiple bubbled in answers. The algorithm still functions normally though,
 # identifying the selected answer for those questions as ''
-multiple_bubbles = ["1299"]
+multiple_bubbles = ['1299', '2241', '6812']
 
-filenames = ["assets/IMG_" + num + ".JPG" for num in normal]
+filenames = ["assets/IMG_" + num + ".JPG" for num in multiple_bubbles]
 
 # Answers inputted manually for comparison
 ORIGINAL_ANS = ['A', 'C', 'B', 'D', 'B', 'A', 'D', 'B', 'C', 'C', 'A', 'A', 'A',
