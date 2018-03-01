@@ -7,8 +7,16 @@ from custom_exceptions import BubbleDetectionError
 import cv2
 import numpy as np
 
-debug = True
-
+DEBUG = True
+NUM_ROWS = 13
+NUM_COLS = 4
+NUM_CHOICES = 4
+MIN_CIRCLE_AREA = 400 * 2
+MAX_CIRCLE_AREA = 600 * 2.5
+ROW_START_POS = 75
+ROW_OFFSET = 84
+COL_START_POS = 168
+COL_OFFSET = 292
 
 def median_absolute_deviation(lst):
     """
@@ -54,12 +62,12 @@ def pre_process(img):
     """Preprocess img for contour recognition"""
     # Gaussian Blur
     img = cv2.GaussianBlur(img, (9, 9), 0)
-    if debug:
+    if DEBUG:
         show_img(img)
 
     # Adaptive Threshold
     img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 47, 5)
-    if debug:
+    if DEBUG:
         show_img(img)
 
     return img
@@ -78,11 +86,12 @@ def get_bubble_contours(img, original_img=None):
     imgCont, contrs, hier = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     # Filter contours by area
     # TODO: Also filter contours by circularity or convexity?
-    contrs = [c for c in contrs if cv2.contourArea(c) > 400 * 2 and cv2.contourArea(c) < 600 * 2.25]
+    contrs = [c for c in contrs if cv2.contourArea(c) > MIN_CIRCLE_AREA and cv2.contourArea(c) < MAX_CIRCLE_AREA]
     number_of_bubbles = len(contrs)
-    if number_of_bubbles < int(52 * 4 * 0.9) or number_of_bubbles > int(52 * 4 * 1.1):
+    expected_number_of_bubbles = NUM_COLS * NUM_ROWS * NUM_CHOICES
+    if number_of_bubbles < int(expected_number_of_bubbles * 0.9) or number_of_bubbles > int(expected_number_of_bubbles * 1.1):
         raise BubbleDetectionError('Insufficient number of detected bubbles')
-    if debug:
+    if DEBUG:
         cv2.drawContours(original_img, contrs, -1, (255, 0, 0), 3)
         show_img(original_img)
     return contrs
@@ -99,18 +108,18 @@ def get_answer_grid(contrs, img):
     # Calculate contour centers
     cnt_centers = [contour_center(cnt) for cnt in contrs]
     # Cluster contour centers by rows
-    rows = k_means(cnt_centers, [(0, 75 + row * 84) for row in range(13)], vertical_distance, img)
+    rows = k_means(cnt_centers, [(0, ROW_START_POS + row * ROW_OFFSET) for row in range(NUM_ROWS)], vertical_distance, img)
     # Verify number of rows
-    if len(rows) != 13:
+    if len(rows) != NUM_ROWS:
         raise BubbleDetectionError('Not enough rows were found')
     # Sort those rows
     rows = sort_dict(rows, lambda x: x[1])
     # Cluster contour centers by columns
-    rows = [k_means(row, [(168 + 292 * col, 0) for col in range(4)], horizontal_distance, img) for row in
+    rows = [k_means(row, [(COL_START_POS + COL_OFFSET * col, 0) for col in range(NUM_COLS)], horizontal_distance, img) for row in
             rows]
     # Verify number of columns in each row
     for row in rows:
-        if len(row) != 4:
+        if len(row) != NUM_COLS:
             raise BubbleDetectionError('Not enough columns were found')
     # Sort those columns
     rows = [sort_dict(row, lambda x: x[0]) for row in rows]
@@ -125,7 +134,7 @@ def get_question_location(question, grid):
     :param grid: the grid returned by get_answer_grid()
     :return: an array containing sorted points, each representing the location of a detected bubble of the requested question
     """
-    return grid[(question - 1) % 13][(question - 1) // 13]
+    return grid[(question - 1) % NUM_ROWS][(question - 1) // NUM_ROWS]
 
 
 def get_ans_from_user(question):
@@ -145,7 +154,7 @@ def map_number_to_capital_letter(num):
 def find_answers(filename):
     img = cv2.imread(filename)
     img = get_paper(img)
-    if debug:
+    if DEBUG:
         show_img(img)
 
     img_with_color = img.copy()
@@ -157,14 +166,14 @@ def find_answers(filename):
     answers = []
 
     # Loop through the question numbers and append each detected answer to a list
-    for question in range(1, 53):
+    for question in range(1, NUM_ROWS * NUM_COLS + 1):
         locations = get_question_location(question, grid)
         ans = ''
-        if len(locations) != 4:
+        if len(locations) != NUM_CHOICES:
             answers.append(get_ans_from_user(question))
             continue
         means = []
-        for i in range(4):
+        for i in range(NUM_CHOICES):
             # Calculate average brightness of the circle around each bubble center
             mask = np.zeros(img.shape, np.uint8)
             cv2.circle(mask, locations[i], 12, 255, -1)
