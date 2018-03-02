@@ -175,6 +175,12 @@ def find_answers(filename):
     grid = get_answer_grid(contrs, img_with_color)
     answers = []
 
+    # Adaptive histogram equalization
+    clahe = cv2.createCLAHE(1, (80, 20))
+    img_gray = clahe.apply(img_gray)
+    if DEBUG:
+        show_img(img_gray)
+
     # Loop through the question numbers and append each detected answer to a list
     for question in range(1, NUM_ROWS * NUM_COLS + 1):
         locations = get_question_location(question, grid)
