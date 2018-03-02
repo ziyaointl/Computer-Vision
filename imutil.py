@@ -95,5 +95,4 @@ def circularity(contour):
     if perimeter == 0:
         return 0
     area = cv2.contourArea(contour)
-    print area
     return (4 * pi * area) / perimeter**2
