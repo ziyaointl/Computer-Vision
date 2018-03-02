@@ -85,8 +85,7 @@ def get_bubble_contours(img, original_img=None):
     imgCont, contrs, hier = cv2.findContours(img, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     # Filter contours by area
     # TODO: Also filter contours by circularity or convexity?
-    contrs = [c for c in contrs if circularity(c) > .8 and cv2.contourArea(c) > MIN_CIRCLE_AREA
-              and cv2.contourArea(c) < MAX_CIRCLE_AREA]
+    contrs = [c for c in contrs if cv2.contourArea(c) > MIN_CIRCLE_AREA and cv2.contourArea(c) < MAX_CIRCLE_AREA]
     number_of_bubbles = len(contrs)
     expected_number_of_bubbles = NUM_COLS * NUM_ROWS * NUM_CHOICES
     if number_of_bubbles < int(expected_number_of_bubbles * 0.9):
