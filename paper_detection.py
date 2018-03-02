@@ -47,7 +47,7 @@ def get_paper(img):
 
     # Approximate the answer region contour to a polygon
     final_contr = get_answer_region_contour(contrs, hier[0], index_of_largest_contour, resizedImg)
-    epsilon = 0.1 * cv2.arcLength(final_contr, True)
+    epsilon = 0.08 * cv2.arcLength(final_contr, True)
     final_contr = cv2.approxPolyDP(final_contr, epsilon, True)
     # Assuming the answer region takes up the majority of the screen.
     # If the max-sized contour is too small compared to the image (<20%),
