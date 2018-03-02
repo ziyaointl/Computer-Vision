@@ -16,6 +16,14 @@ CIRCLE_RADIUS = 6
 COL_START_POS = 130
 COL_OFFSET = 195
 OUTLIER_THRESH = 3.5
+STD_THRESH = 10
+
+def std(lst, key=lambda x: x):
+    values = []
+    for element in lst:
+        values.append(key(element))
+    return np.std(values)
+
 
 def median_absolute_deviation(lst):
     """
@@ -193,14 +201,29 @@ def find_answers(filename):
             # Calculate average brightness of the circle around each bubble center
             mask = np.zeros(img.shape, np.uint8)
             cv2.circle(mask, locations[i], CIRCLE_RADIUS, 255, -1)
-            # If average brightness is smaller than 100, regard the bubble as filled
-            means.append(cv2.mean(img_gray, mask)[0])
-        for outlier_index in outliers(means, OUTLIER_THRESH):
-            # Guard against the situation when three out of four bubbles are filled
-            if means[outlier_index] < mean(means[:i] + means[i + 1:]):
-                ans += map_number_to_capital_letter(outlier_index)
+            means.append([map_number_to_capital_letter(i), cv2.mean(img_gray, mask)[0]])
+        means = sorted(means, key=lambda x: x[1])
+        if average_binary_standard_deviation(means, 0, lambda x: x[1]) < STD_THRESH:
+            ans = 'ALL OR NONE'
+        else:
+            for i in range(1, NUM_CHOICES):
+                if average_binary_standard_deviation(means, i, lambda x:x[1]) < STD_THRESH:
+                    for j in range(i):
+                        ans += means[j][0]
         answers.append(ans)
     return answers
+
+
+def average_binary_standard_deviation(lst, split_pos, key=lambda x: x):
+    assert split_pos >= 0 and split_pos < len(lst), 'Invalid split position'
+    lhs = lst[:split_pos]
+    rhs = lst[split_pos:]
+    assert not len(lhs) <= 1 or not len(rhs) <= 1, 'Both sublists are too small'
+    if len(lhs) <= 1:
+        return std(rhs, key)
+    if len(rhs) <= 1:
+        return std(lhs, key)
+    return (std(lhs, key) + std(rhs, key)) / 2
 
 import doctest
 doctest.testmod()
