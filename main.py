@@ -7,15 +7,15 @@ import cv2
 import numpy as np
 
 DEBUG = True
-NUM_ROWS = 13
+NUM_ROWS = 20
 NUM_COLS = 4
 NUM_CHOICES = 4
-MIN_CIRCLE_AREA = 400 * 2
-MAX_CIRCLE_AREA = 600 * 2.5
-ROW_START_POS = 75
-ROW_OFFSET = 84
-COL_START_POS = 168
-COL_OFFSET = 292
+MIN_CIRCLE_AREA = 300
+MAX_CIRCLE_AREA = 500
+CIRCLE_RADIUS = 6
+COL_START_POS = 130
+COL_OFFSET = 195
+OUTLIER_THRESH = 3.5
 
 def median_absolute_deviation(lst):
     """
@@ -65,7 +65,7 @@ def pre_process(img):
         show_img(img)
 
     # Adaptive Threshold
-    img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 47, 5)
+    img = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 5)
     if DEBUG:
         show_img(img)
 
@@ -98,6 +98,12 @@ def get_bubble_contours(img, original_img=None):
         show_img(original_img)
     return contrs
 
+def cluster_into_rows(pt, rows):
+    for key in rows.keys():
+        if vertical_distance(pt, key) < 40:
+            rows[key].append(pt)
+            return
+    rows[pt] = [pt]
 
 def get_answer_grid(contrs, img):
     """Group individual bubble locations into questions they belong.
@@ -110,7 +116,9 @@ def get_answer_grid(contrs, img):
     # Calculate contour centers
     cnt_centers = [contour_center(cnt) for cnt in contrs]
     # Cluster contour centers by rows
-    rows = k_means(cnt_centers, [(0, ROW_START_POS + row * ROW_OFFSET) for row in range(NUM_ROWS)], vertical_distance, img)
+    rows = {}
+    for pt in cnt_centers:
+        cluster_into_rows(pt, rows)
     # Verify number of rows
     if len(rows) != NUM_ROWS:
         raise BubbleDetectionError('Wrong number of rows were found')
@@ -178,10 +186,10 @@ def find_answers(filename):
         for i in range(NUM_CHOICES):
             # Calculate average brightness of the circle around each bubble center
             mask = np.zeros(img.shape, np.uint8)
-            cv2.circle(mask, locations[i], 12, 255, -1)
+            cv2.circle(mask, locations[i], CIRCLE_RADIUS, 255, -1)
             # If average brightness is smaller than 100, regard the bubble as filled
             means.append(cv2.mean(img_gray, mask)[0])
-        for outlier_index in outliers(means, 3.5):
+        for outlier_index in outliers(means, OUTLIER_THRESH):
             # Guard against the situation when three out of four bubbles are filled
             if means[outlier_index] < mean(means[:i] + means[i + 1:]):
                 ans += map_number_to_capital_letter(outlier_index)

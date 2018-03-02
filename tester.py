@@ -19,12 +19,15 @@ def compute_accuracy(original_ans, detected_ans):
 normal = ['6388', '2826','1243', '3064', '6591', '8836', '8760', '6024',
           '6112', '1738', '3031', '5241', '7230', '7394', '3497', '6415']
 # File(s) that cause an exception to be thrown, meaning that the user has to retake an image
-fails = ['9891', '8880']
+fails = ['0430', '3809']
 # File(s) that contain questions with multiple bubbled in answers. The algorithm still functions normally though,
 # identifying the selected answer for those questions as ''
 multiple_bubbles = ['1299', '2241', '6812']
+blank = ['5865', '1689', '1109']
+glare = ['2936', '0847']
+new = ['7135', '6193', '1589', '8139', '0977', '2869', '1491', '7789', '9577']
 
-filenames = ["assets/IMG_" + num + ".JPG" for num in multiple_bubbles]
+filenames = ["assets/IMG_" + num + ".JPG" for num in new]
 
 # Answers inputted manually for comparison
 ORIGINAL_ANS = ['A', 'C', 'B', 'D', 'B', 'A', 'D', 'B', 'C', 'C', 'A', 'A', 'A',

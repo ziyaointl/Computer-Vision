@@ -6,8 +6,8 @@ from imutil import show_img
 from custom_exceptions import PaperDetectionError
 
 DEBUG = True
-ANS_REGION_HIEGHT = 1125
-ANS_REGION_WIDTH = 1155
+ANS_REGION_HIEGHT = 1254
+ANS_REGION_WIDTH = 828
 
 def get_paper(img):
     # Read in file and resize
